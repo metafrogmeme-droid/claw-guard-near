@@ -1,0 +1,49 @@
+{
+  "meta": {
+    "note": "Testnet only. Cross-check vectors for NEAR MPC key derivation. Public keys only; no secrets.",
+    "generator": "throwaway script using chainsig.js@1.1.16 utils.cryptography.deriveChildPublicKey + najToUncompressedPubKeySEC1, viem keccak256 for the address",
+    "generated_on": "2026-10-30",
+    "mpc_contract_id": "v1.signer-prod.testnet",
+    "root_pk": "secp256k1:4NfTiv3UsGahebgTaHyD9vF8KYKMBnfd6kh94mK6xv8fGBiJB8TBtFMP5WWXz6B89Ac1fbpzPwAvoyQebemHFwx3",
+    "root_pk_source": "chainsig.js@1.1.16 constants.ROOT_PUBLIC_KEYS.TESTNET.secp256k1 (documented there as the MPC contract's public_key view, domain_id 0). UNVERIFIED by us against the live v1.signer-prod.testnet contract.",
+    "root_pk_uncompressed": "0x04a8bb8176747682aab5c681d4ef375ca537023b2b287d8b5f9d89505277a5a291538ef3680882d8fb793a62a5fdb4c6974c7cd8f9eb0b9cbbf659314c30347000",
+    "formula": "tweak = sha3_256('near-mpc-recovery v0.1.0 epsilon derivation:' + predecessor + ',' + path); derived = root + tweak*G; address = keccak256(uncompressed[1..])[12..]"
+  },
+  "vectors": [
+    {
+      "predecessor": "clawguard.example.testnet",
+      "path": "hl-testnet-1",
+      "tweak": "0xa165be200e963db7abc6fe64096d37e8c4af4cd961752908fc4062ddf0668f89",
+      "derived_pk_uncompressed": "0x049a8cb8cb39a240608a9b4199cada2b9b38fa851d2bb3f72cfa7d92cfd659142755993e3a500ded69018fd3e00b45fb9242eeefa7c82a2091abce2890b2853672",
+      "evm_address": "0x82e0d781c5d95abe7549d0a908b32d1de9a1f88f"
+    },
+    {
+      "predecessor": "clawguard.example.testnet",
+      "path": "base-sepolia-1",
+      "tweak": "0xb3b8c191c9510a153a87667e7572861990db70963cb8260f03a4a0af33bf6045",
+      "derived_pk_uncompressed": "0x04e13ef858b6387c2664363adc616b5eed54e779ca50d46a6cd32805ae5811a8af7e82c66d3a966fd2b32ca4d2fd7561de92c4cfdb7f510965088f6c934c4fd7cc",
+      "evm_address": "0xd1766ae12094afd17a327aa6962e667213f62a52"
+    },
+    {
+      "predecessor": "agent-1.example.testnet",
+      "path": "hl-testnet-1",
+      "tweak": "0xb91a97862559a4e8cd5058dc2a3162916587d198ee5155434616394015efbbd6",
+      "derived_pk_uncompressed": "0x04200ccaf97efa9ba67f8917cdd5b4e69affa8e5433c7f8604d8c3421c1da3c17d17a634236a77f86f07b7ca8759e15e5b53a73538e89b8807bf3bea757df1143e",
+      "evm_address": "0x47ea6d0624d26bb21e22f338bba18ff38921f792"
+    },
+    {
+      "predecessor": "v1.signer-prod.testnet",
+      "path": "hl-testnet-1",
+      "tweak": "0x61eb7badb92e026d1c678216c6fe06a03b368cd9f6d588238d3f67aa6da216ca",
+      "derived_pk_uncompressed": "0x042904a1562e1e329b1b6dd6ecb327f5f4c5203f89a26f9188d9b0ab1442627a7dc55a4d95f62cafe3b03182658c223472f078c4fe9e4e70030f2f6842d455bac4",
+      "evm_address": "0xb735169630579c9e1c127ef43e89d888694ca43e"
+    },
+    {
+      "predecessor": "dwefqwg",
+      "path": "frwewegwegweg",
+      "tweak": "0xad2d6fc1f445a1b43830415e7e6e3d03cd077673047848a085f130c24f53ee00",
+      "derived_pk_uncompressed": "0x0435a38685982fa4ebc6723f325c2be5a957e4c05b81971809ec0cb7d65d8f1f321b0f3acc85545b42ef0f23ae25f28d467eeb795b091d57b0780d569ec72c7a24",
+      "evm_address": "0x678ba9ef4bc35728b15d98dac1903c7799340297"
+    }
+  ]
+}

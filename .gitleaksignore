@@ -1,0 +1,9 @@
+# Verified false positives in git history, one fingerprint per line (gitleaks reads this
+# file from the repo root). Each entry names one commit, file, rule and line; nothing else is
+# exempted, and every rule keeps scanning all other content and future commits.
+#
+# 16f1f37 is a WIP snapshot of offchain/test/envfile_atomic.test.ts. Line 205 held a dummy test
+# value: the 16 hex digits 0 to f in order, assigned to a SECRET_LIKE variable, used only to check
+# that the atomic .env writer reports the first error. A later commit replaced it with a value made
+# at run time.
+16f1f373d94c1e55419617a2d8af6da405d7b461:offchain/test/envfile_atomic.test.ts:generic-api-key:205

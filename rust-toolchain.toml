@@ -1,0 +1,6 @@
+# Owner decision (30 Oct 2026): Rust 1.97. near-sdk 5.30.0 needs rust_version >= 1.95.
+[toolchain]
+channel = "1.97"
+components = ["rustfmt", "clippy"]
+targets = ["wasm32-unknown-unknown"]
+profile = "minimal"

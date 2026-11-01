@@ -1,0 +1,699 @@
+{
+  "meta": {
+    "note": "Test fixture. claw-guard view results (decoded JSON of query/call_function) for the prompt-injection scenario in the sandbox.",
+    "format": "get_status -> GuardStatus; get_receipts(from_id, limit) -> Receipt[] (types.ts). Receipt #1 uses hl_orders.json vector 0 (worthless test key).",
+    "provenance": "Written by hand from types.ts / contracts/claw-guard/src/errors.rs (exact decision strings), NOT captured from a deployed contract."
+  },
+  "contract_id": "clawguard.test.near",
+  "steps": {
+    "baseline": {
+      "get_status": {
+        "owner": "owner.test.near",
+        "guardian": "guardian.test.near",
+        "paused": false,
+        "pause_reason": null,
+        "mpc_contract_id": "mock-mpc.test.near",
+        "agents_count": 1,
+        "receipts_count": 1
+      },
+      "receipts": [
+        {
+          "id": "1",
+          "agent_id": "agent-1.test.near",
+          "rules_version": 1,
+          "block_height": "101",
+          "timestamp_ns": "1793318410000000000",
+          "target": "HlTestnet",
+          "proposal": {
+            "target": "HlTestnet",
+            "order": {
+              "HlOrder": {
+                "market": "BTC",
+                "is_buy": true,
+                "limit_px": "1000",
+                "sz": "0.001",
+                "reduce_only": false,
+                "tif": "Gtc",
+                "nonce_ms": "1793318400000"
+              }
+            },
+            "memo": null
+          },
+          "status": "Signed",
+          "rule_code": null,
+          "message": "Allowed: within your limits",
+          "payload_hash": "0xb3b15673239dca3c77fb9e1138b7a62a05989688995ea4bf65fd102ccb07ca39",
+          "signed_body": "{\"type\":\"order\",\"orders\":[{\"a\":3,\"b\":true,\"p\":\"1000\",\"s\":\"0.001\",\"r\":false,\"t\":{\"limit\":{\"tif\":\"Gtc\"}}}],\"grouping\":\"na\"}",
+          "derivation_path": "hl-testnet-1",
+          "signature": {
+            "r": "0x9db86c1758bcc9235d0a38bac92817585d959fd8a5f867bd8d1da89ffe5a8d61",
+            "s": "0x2f466ddbac66b5f18ba942c53f493f845287493bb7e1e29928c7c854d2284938",
+            "v": 28
+          }
+        }
+      ]
+    },
+    "injection": {
+      "get_status": {
+        "owner": "owner.test.near",
+        "guardian": "guardian.test.near",
+        "paused": false,
+        "pause_reason": null,
+        "mpc_contract_id": "mock-mpc.test.near",
+        "agents_count": 1,
+        "receipts_count": 6
+      },
+      "receipts": [
+        {
+          "id": "1",
+          "agent_id": "agent-1.test.near",
+          "rules_version": 1,
+          "block_height": "101",
+          "timestamp_ns": "1793318410000000000",
+          "target": "HlTestnet",
+          "proposal": {
+            "target": "HlTestnet",
+            "order": {
+              "HlOrder": {
+                "market": "BTC",
+                "is_buy": true,
+                "limit_px": "1000",
+                "sz": "0.001",
+                "reduce_only": false,
+                "tif": "Gtc",
+                "nonce_ms": "1793318400000"
+              }
+            },
+            "memo": null
+          },
+          "status": "Signed",
+          "rule_code": null,
+          "message": "Allowed: within your limits",
+          "payload_hash": "0xb3b15673239dca3c77fb9e1138b7a62a05989688995ea4bf65fd102ccb07ca39",
+          "signed_body": "{\"type\":\"order\",\"orders\":[{\"a\":3,\"b\":true,\"p\":\"1000\",\"s\":\"0.001\",\"r\":false,\"t\":{\"limit\":{\"tif\":\"Gtc\"}}}],\"grouping\":\"na\"}",
+          "derivation_path": "hl-testnet-1",
+          "signature": {
+            "r": "0x9db86c1758bcc9235d0a38bac92817585d959fd8a5f867bd8d1da89ffe5a8d61",
+            "s": "0x2f466ddbac66b5f18ba942c53f493f845287493bb7e1e29928c7c854d2284938",
+            "v": 28
+          }
+        },
+        {
+          "id": "2",
+          "agent_id": "agent-1.test.near",
+          "rules_version": 1,
+          "block_height": "102",
+          "timestamp_ns": "1793318420000000000",
+          "target": "HlTestnet",
+          "proposal": {
+            "target": "HlTestnet",
+            "order": {
+              "HlOrder": {
+                "market": "DOGE",
+                "is_buy": true,
+                "limit_px": "0.1",
+                "sz": "100",
+                "reduce_only": false,
+                "tif": "Gtc",
+                "nonce_ms": "1793318400001"
+              }
+            },
+            "memo": null
+          },
+          "status": "Blocked",
+          "rule_code": "MARKET_NOT_ALLOWED",
+          "message": "Blocked by your rule: market DOGE is not on your list",
+          "payload_hash": null,
+          "signed_body": null,
+          "derivation_path": null,
+          "signature": null
+        },
+        {
+          "id": "3",
+          "agent_id": "agent-1.test.near",
+          "rules_version": 1,
+          "block_height": "103",
+          "timestamp_ns": "1793318430000000000",
+          "target": "HlTestnet",
+          "proposal": {
+            "target": "HlTestnet",
+            "order": {
+              "HlOrder": {
+                "market": "BTC",
+                "is_buy": true,
+                "limit_px": "1000",
+                "sz": "5",
+                "reduce_only": false,
+                "tif": "Gtc",
+                "nonce_ms": "1793318400002"
+              }
+            },
+            "memo": null
+          },
+          "status": "Blocked",
+          "rule_code": "ORDER_ABOVE_CAP",
+          "message": "Blocked by your rule: order is above your per-order cap",
+          "payload_hash": null,
+          "signed_body": null,
+          "derivation_path": null,
+          "signature": null
+        },
+        {
+          "id": "4",
+          "agent_id": "agent-1.test.near",
+          "rules_version": 1,
+          "block_height": "104",
+          "timestamp_ns": "1793318440000000000",
+          "target": "HlTestnet",
+          "proposal": {
+            "target": "HlTestnet",
+            "order": {
+              "HlUpdateLeverage": {
+                "market": "BTC",
+                "is_cross": true,
+                "leverage": 50,
+                "nonce_ms": "1793318400003"
+              }
+            },
+            "memo": null
+          },
+          "status": "Blocked",
+          "rule_code": "LEVERAGE_ABOVE_LIMIT",
+          "message": "Blocked by your rule: leverage 50x is above your limit of 3x",
+          "payload_hash": null,
+          "signed_body": null,
+          "derivation_path": null,
+          "signature": null
+        },
+        {
+          "id": "5",
+          "agent_id": "agent-1.test.near",
+          "rules_version": 1,
+          "block_height": "105",
+          "timestamp_ns": "1793318450000000000",
+          "target": "BaseSepolia",
+          "proposal": {
+            "target": "BaseSepolia",
+            "order": {
+              "EvmTransfer": {
+                "token": "USDC",
+                "to": "0xbadbadbadbadbadbadbadbadbadbadbadbadbad0",
+                "amount": "1000000",
+                "nonce": "1",
+                "gas_limit": "65000",
+                "max_fee_per_gas": "2000000000",
+                "max_priority_fee_per_gas": "1000000"
+              }
+            },
+            "memo": null
+          },
+          "status": "Blocked",
+          "rule_code": "RECEIVER_NOT_ALLOWED",
+          "message": "Blocked by your rule: receiver 0xbadbadbadbadbadbadbadbadbadbadbadbadbad0 is not on your list",
+          "payload_hash": null,
+          "signed_body": null,
+          "derivation_path": null,
+          "signature": null
+        },
+        {
+          "id": "6",
+          "agent_id": "agent-1.test.near",
+          "rules_version": 1,
+          "block_height": "106",
+          "timestamp_ns": "1793318460000000000",
+          "target": "HlTestnet",
+          "proposal": {
+            "target": "HlTestnet",
+            "order": {
+              "HlOrder": {
+                "market": "BTC",
+                "is_buy": true,
+                "limit_px": "1000",
+                "sz": "0.009",
+                "reduce_only": false,
+                "tif": "Gtc",
+                "nonce_ms": "1793318400004"
+              }
+            },
+            "memo": null
+          },
+          "status": "Blocked",
+          "rule_code": "DAILY_CAP",
+          "message": "Blocked by your rule: this order would go over your daily cap",
+          "payload_hash": null,
+          "signed_body": null,
+          "derivation_path": null,
+          "signature": null
+        }
+      ]
+    },
+    "paused": {
+      "get_status": {
+        "owner": "owner.test.near",
+        "guardian": "guardian.test.near",
+        "paused": true,
+        "pause_reason": "watch: new full-access key",
+        "mpc_contract_id": "mock-mpc.test.near",
+        "agents_count": 1,
+        "receipts_count": 7
+      },
+      "receipts": [
+        {
+          "id": "1",
+          "agent_id": "agent-1.test.near",
+          "rules_version": 1,
+          "block_height": "101",
+          "timestamp_ns": "1793318410000000000",
+          "target": "HlTestnet",
+          "proposal": {
+            "target": "HlTestnet",
+            "order": {
+              "HlOrder": {
+                "market": "BTC",
+                "is_buy": true,
+                "limit_px": "1000",
+                "sz": "0.001",
+                "reduce_only": false,
+                "tif": "Gtc",
+                "nonce_ms": "1793318400000"
+              }
+            },
+            "memo": null
+          },
+          "status": "Signed",
+          "rule_code": null,
+          "message": "Allowed: within your limits",
+          "payload_hash": "0xb3b15673239dca3c77fb9e1138b7a62a05989688995ea4bf65fd102ccb07ca39",
+          "signed_body": "{\"type\":\"order\",\"orders\":[{\"a\":3,\"b\":true,\"p\":\"1000\",\"s\":\"0.001\",\"r\":false,\"t\":{\"limit\":{\"tif\":\"Gtc\"}}}],\"grouping\":\"na\"}",
+          "derivation_path": "hl-testnet-1",
+          "signature": {
+            "r": "0x9db86c1758bcc9235d0a38bac92817585d959fd8a5f867bd8d1da89ffe5a8d61",
+            "s": "0x2f466ddbac66b5f18ba942c53f493f845287493bb7e1e29928c7c854d2284938",
+            "v": 28
+          }
+        },
+        {
+          "id": "2",
+          "agent_id": "agent-1.test.near",
+          "rules_version": 1,
+          "block_height": "102",
+          "timestamp_ns": "1793318420000000000",
+          "target": "HlTestnet",
+          "proposal": {
+            "target": "HlTestnet",
+            "order": {
+              "HlOrder": {
+                "market": "DOGE",
+                "is_buy": true,
+                "limit_px": "0.1",
+                "sz": "100",
+                "reduce_only": false,
+                "tif": "Gtc",
+                "nonce_ms": "1793318400001"
+              }
+            },
+            "memo": null
+          },
+          "status": "Blocked",
+          "rule_code": "MARKET_NOT_ALLOWED",
+          "message": "Blocked by your rule: market DOGE is not on your list",
+          "payload_hash": null,
+          "signed_body": null,
+          "derivation_path": null,
+          "signature": null
+        },
+        {
+          "id": "3",
+          "agent_id": "agent-1.test.near",
+          "rules_version": 1,
+          "block_height": "103",
+          "timestamp_ns": "1793318430000000000",
+          "target": "HlTestnet",
+          "proposal": {
+            "target": "HlTestnet",
+            "order": {
+              "HlOrder": {
+                "market": "BTC",
+                "is_buy": true,
+                "limit_px": "1000",
+                "sz": "5",
+                "reduce_only": false,
+                "tif": "Gtc",
+                "nonce_ms": "1793318400002"
+              }
+            },
+            "memo": null
+          },
+          "status": "Blocked",
+          "rule_code": "ORDER_ABOVE_CAP",
+          "message": "Blocked by your rule: order is above your per-order cap",
+          "payload_hash": null,
+          "signed_body": null,
+          "derivation_path": null,
+          "signature": null
+        },
+        {
+          "id": "4",
+          "agent_id": "agent-1.test.near",
+          "rules_version": 1,
+          "block_height": "104",
+          "timestamp_ns": "1793318440000000000",
+          "target": "HlTestnet",
+          "proposal": {
+            "target": "HlTestnet",
+            "order": {
+              "HlUpdateLeverage": {
+                "market": "BTC",
+                "is_cross": true,
+                "leverage": 50,
+                "nonce_ms": "1793318400003"
+              }
+            },
+            "memo": null
+          },
+          "status": "Blocked",
+          "rule_code": "LEVERAGE_ABOVE_LIMIT",
+          "message": "Blocked by your rule: leverage 50x is above your limit of 3x",
+          "payload_hash": null,
+          "signed_body": null,
+          "derivation_path": null,
+          "signature": null
+        },
+        {
+          "id": "5",
+          "agent_id": "agent-1.test.near",
+          "rules_version": 1,
+          "block_height": "105",
+          "timestamp_ns": "1793318450000000000",
+          "target": "BaseSepolia",
+          "proposal": {
+            "target": "BaseSepolia",
+            "order": {
+              "EvmTransfer": {
+                "token": "USDC",
+                "to": "0xbadbadbadbadbadbadbadbadbadbadbadbadbad0",
+                "amount": "1000000",
+                "nonce": "1",
+                "gas_limit": "65000",
+                "max_fee_per_gas": "2000000000",
+                "max_priority_fee_per_gas": "1000000"
+              }
+            },
+            "memo": null
+          },
+          "status": "Blocked",
+          "rule_code": "RECEIVER_NOT_ALLOWED",
+          "message": "Blocked by your rule: receiver 0xbadbadbadbadbadbadbadbadbadbadbadbadbad0 is not on your list",
+          "payload_hash": null,
+          "signed_body": null,
+          "derivation_path": null,
+          "signature": null
+        },
+        {
+          "id": "6",
+          "agent_id": "agent-1.test.near",
+          "rules_version": 1,
+          "block_height": "106",
+          "timestamp_ns": "1793318460000000000",
+          "target": "HlTestnet",
+          "proposal": {
+            "target": "HlTestnet",
+            "order": {
+              "HlOrder": {
+                "market": "BTC",
+                "is_buy": true,
+                "limit_px": "1000",
+                "sz": "0.009",
+                "reduce_only": false,
+                "tif": "Gtc",
+                "nonce_ms": "1793318400004"
+              }
+            },
+            "memo": null
+          },
+          "status": "Blocked",
+          "rule_code": "DAILY_CAP",
+          "message": "Blocked by your rule: this order would go over your daily cap",
+          "payload_hash": null,
+          "signed_body": null,
+          "derivation_path": null,
+          "signature": null
+        },
+        {
+          "id": "7",
+          "agent_id": "agent-1.test.near",
+          "rules_version": 1,
+          "block_height": "107",
+          "timestamp_ns": "1793318470000000000",
+          "target": "HlTestnet",
+          "proposal": {
+            "target": "HlTestnet",
+            "order": {
+              "HlOrder": {
+                "market": "BTC",
+                "is_buy": true,
+                "limit_px": "1000",
+                "sz": "0.001",
+                "reduce_only": false,
+                "tif": "Gtc",
+                "nonce_ms": "1793318400005"
+              }
+            },
+            "memo": null
+          },
+          "status": "Blocked",
+          "rule_code": "PAUSED",
+          "message": "Blocked by your rule: agent is paused (watch: new full-access key)",
+          "payload_hash": null,
+          "signed_body": null,
+          "derivation_path": null,
+          "signature": null
+        }
+      ]
+    },
+    "unpaused": {
+      "get_status": {
+        "owner": "owner.test.near",
+        "guardian": "guardian.test.near",
+        "paused": false,
+        "pause_reason": null,
+        "mpc_contract_id": "mock-mpc.test.near",
+        "agents_count": 1,
+        "receipts_count": 7
+      },
+      "receipts": [
+        {
+          "id": "1",
+          "agent_id": "agent-1.test.near",
+          "rules_version": 1,
+          "block_height": "101",
+          "timestamp_ns": "1793318410000000000",
+          "target": "HlTestnet",
+          "proposal": {
+            "target": "HlTestnet",
+            "order": {
+              "HlOrder": {
+                "market": "BTC",
+                "is_buy": true,
+                "limit_px": "1000",
+                "sz": "0.001",
+                "reduce_only": false,
+                "tif": "Gtc",
+                "nonce_ms": "1793318400000"
+              }
+            },
+            "memo": null
+          },
+          "status": "Signed",
+          "rule_code": null,
+          "message": "Allowed: within your limits",
+          "payload_hash": "0xb3b15673239dca3c77fb9e1138b7a62a05989688995ea4bf65fd102ccb07ca39",
+          "signed_body": "{\"type\":\"order\",\"orders\":[{\"a\":3,\"b\":true,\"p\":\"1000\",\"s\":\"0.001\",\"r\":false,\"t\":{\"limit\":{\"tif\":\"Gtc\"}}}],\"grouping\":\"na\"}",
+          "derivation_path": "hl-testnet-1",
+          "signature": {
+            "r": "0x9db86c1758bcc9235d0a38bac92817585d959fd8a5f867bd8d1da89ffe5a8d61",
+            "s": "0x2f466ddbac66b5f18ba942c53f493f845287493bb7e1e29928c7c854d2284938",
+            "v": 28
+          }
+        },
+        {
+          "id": "2",
+          "agent_id": "agent-1.test.near",
+          "rules_version": 1,
+          "block_height": "102",
+          "timestamp_ns": "1793318420000000000",
+          "target": "HlTestnet",
+          "proposal": {
+            "target": "HlTestnet",
+            "order": {
+              "HlOrder": {
+                "market": "DOGE",
+                "is_buy": true,
+                "limit_px": "0.1",
+                "sz": "100",
+                "reduce_only": false,
+                "tif": "Gtc",
+                "nonce_ms": "1793318400001"
+              }
+            },
+            "memo": null
+          },
+          "status": "Blocked",
+          "rule_code": "MARKET_NOT_ALLOWED",
+          "message": "Blocked by your rule: market DOGE is not on your list",
+          "payload_hash": null,
+          "signed_body": null,
+          "derivation_path": null,
+          "signature": null
+        },
+        {
+          "id": "3",
+          "agent_id": "agent-1.test.near",
+          "rules_version": 1,
+          "block_height": "103",
+          "timestamp_ns": "1793318430000000000",
+          "target": "HlTestnet",
+          "proposal": {
+            "target": "HlTestnet",
+            "order": {
+              "HlOrder": {
+                "market": "BTC",
+                "is_buy": true,
+                "limit_px": "1000",
+                "sz": "5",
+                "reduce_only": false,
+                "tif": "Gtc",
+                "nonce_ms": "1793318400002"
+              }
+            },
+            "memo": null
+          },
+          "status": "Blocked",
+          "rule_code": "ORDER_ABOVE_CAP",
+          "message": "Blocked by your rule: order is above your per-order cap",
+          "payload_hash": null,
+          "signed_body": null,
+          "derivation_path": null,
+          "signature": null
+        },
+        {
+          "id": "4",
+          "agent_id": "agent-1.test.near",
+          "rules_version": 1,
+          "block_height": "104",
+          "timestamp_ns": "1793318440000000000",
+          "target": "HlTestnet",
+          "proposal": {
+            "target": "HlTestnet",
+            "order": {
+              "HlUpdateLeverage": {
+                "market": "BTC",
+                "is_cross": true,
+                "leverage": 50,
+                "nonce_ms": "1793318400003"
+              }
+            },
+            "memo": null
+          },
+          "status": "Blocked",
+          "rule_code": "LEVERAGE_ABOVE_LIMIT",
+          "message": "Blocked by your rule: leverage 50x is above your limit of 3x",
+          "payload_hash": null,
+          "signed_body": null,
+          "derivation_path": null,
+          "signature": null
+        },
+        {
+          "id": "5",
+          "agent_id": "agent-1.test.near",
+          "rules_version": 1,
+          "block_height": "105",
+          "timestamp_ns": "1793318450000000000",
+          "target": "BaseSepolia",
+          "proposal": {
+            "target": "BaseSepolia",
+            "order": {
+              "EvmTransfer": {
+                "token": "USDC",
+                "to": "0xbadbadbadbadbadbadbadbadbadbadbadbadbad0",
+                "amount": "1000000",
+                "nonce": "1",
+                "gas_limit": "65000",
+                "max_fee_per_gas": "2000000000",
+                "max_priority_fee_per_gas": "1000000"
+              }
+            },
+            "memo": null
+          },
+          "status": "Blocked",
+          "rule_code": "RECEIVER_NOT_ALLOWED",
+          "message": "Blocked by your rule: receiver 0xbadbadbadbadbadbadbadbadbadbadbadbadbad0 is not on your list",
+          "payload_hash": null,
+          "signed_body": null,
+          "derivation_path": null,
+          "signature": null
+        },
+        {
+          "id": "6",
+          "agent_id": "agent-1.test.near",
+          "rules_version": 1,
+          "block_height": "106",
+          "timestamp_ns": "1793318460000000000",
+          "target": "HlTestnet",
+          "proposal": {
+            "target": "HlTestnet",
+            "order": {
+              "HlOrder": {
+                "market": "BTC",
+                "is_buy": true,
+                "limit_px": "1000",
+                "sz": "0.009",
+                "reduce_only": false,
+                "tif": "Gtc",
+                "nonce_ms": "1793318400004"
+              }
+            },
+            "memo": null
+          },
+          "status": "Blocked",
+          "rule_code": "DAILY_CAP",
+          "message": "Blocked by your rule: this order would go over your daily cap",
+          "payload_hash": null,
+          "signed_body": null,
+          "derivation_path": null,
+          "signature": null
+        },
+        {
+          "id": "7",
+          "agent_id": "agent-1.test.near",
+          "rules_version": 1,
+          "block_height": "107",
+          "timestamp_ns": "1793318470000000000",
+          "target": "HlTestnet",
+          "proposal": {
+            "target": "HlTestnet",
+            "order": {
+              "HlOrder": {
+                "market": "BTC",
+                "is_buy": true,
+                "limit_px": "1000",
+                "sz": "0.001",
+                "reduce_only": false,
+                "tif": "Gtc",
+                "nonce_ms": "1793318400005"
+              }
+            },
+            "memo": null
+          },
+          "status": "Blocked",
+          "rule_code": "PAUSED",
+          "message": "Blocked by your rule: agent is paused (watch: new full-access key)",
+          "payload_hash": null,
+          "signed_body": null,
+          "derivation_path": null,
+          "signature": null
+        }
+      ]
+    }
+  }
+}

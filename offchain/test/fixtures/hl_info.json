@@ -1,0 +1,64 @@
+{
+  "meta": {
+    "note": "Test fixture. Hyperliquid TESTNET /info responses for a testnet-only master account; addresses are made up.",
+    "format": "POST https://api.hyperliquid-testnet.xyz/info {type, user}. extraAgents: list of {name, address, validUntil} (hyperliquid-python-sdk 0.24.0 Info.extra_agents docstring). approvedBuilders: list of addresses (shape UNVERIFIED: the SDK has no wrapper for it).",
+    "provenance": "Written by hand from the SDK docstring, NOT captured: Hyperliquid is unreachable from the build container."
+  },
+  "user": "0x7e57000000000000000000000000000000c1a700",
+  "steps": {
+    "baseline": {
+      "extraAgents": [
+        {
+          "name": "clawguard valid_until 1794528000000",
+          "address": "0x3f1c6e0a52b4d7a8e9f0c1b2a3d4e5f60718293a",
+          "validUntil": 1794528000000
+        }
+      ],
+      "approvedBuilders": []
+    },
+    "new_api_wallet": {
+      "extraAgents": [
+        {
+          "name": "clawguard valid_until 1794528000000",
+          "address": "0x3f1c6e0a52b4d7a8e9f0c1b2a3d4e5f60718293a",
+          "validUntil": 1794528000000
+        },
+        {
+          "name": "helper",
+          "address": "0x00000000000000000000000000000000000b0b01",
+          "validUntil": 1795132800000
+        }
+      ],
+      "approvedBuilders": []
+    },
+    "builder_approved": {
+      "extraAgents": [
+        {
+          "name": "clawguard valid_until 1794528000000",
+          "address": "0x3f1c6e0a52b4d7a8e9f0c1b2a3d4e5f60718293a",
+          "validUntil": 1794528000000
+        },
+        {
+          "name": "helper",
+          "address": "0x00000000000000000000000000000000000b0b01",
+          "validUntil": 1795132800000
+        }
+      ],
+      "approvedBuilders": [
+        "0x1b2d000000000000000000000000000000000b1d"
+      ]
+    },
+    "api_wallet_removed": {
+      "extraAgents": [
+        {
+          "name": "helper",
+          "address": "0x00000000000000000000000000000000000b0b01",
+          "validUntil": 1795132800000
+        }
+      ],
+      "approvedBuilders": [
+        "0x1b2d000000000000000000000000000000000b1d"
+      ]
+    }
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "meta": {
+    "generator": "throwaway script calling hyperliquid.utils.signing.sign_agent (is_mainnet=False)",
+    "sdk": "hyperliquid-python-sdk==0.24.0",
+    "is_mainnet": false,
+    "primary_type": "HyperliquidTransaction:ApproveAgent",
+    "note": "Testnet only. Test key derived from the public label 'clawguard-test-vectors-only'; worthless."
+  },
+  "vectors": [
+    {
+      "name": "derived_agent_valid_until",
+      "request": {
+        "agent_address": "0x82e0d781c5d95abe7549d0a908b32d1de9a1f88f",
+        "agent_name": "clawguard valid_until 1796083200000",
+        "nonce_ms": 1793318400000
+      },
+      "action": {
+        "type": "approveAgent",
+        "agentAddress": "0x82E0D781c5D95aBe7549d0a908B32D1dE9A1f88f",
+        "agentName": "clawguard valid_until 1796083200000",
+        "nonce": 1793318400000,
+        "signatureChainId": "0x66eee",
+        "hyperliquidChain": "Testnet"
+      },
+      "digest": "0xcab67ca7b2e37a90f174c6f498569c099d7bbd25f9fc347705e9e5c86cc48e86",
+      "signer": "0xd6f91a183f9a36834639c56489825c8a9afcfe45",
+      "signature": {
+        "r": "0xd6823ce3bcc68af5a3e8365a25521b85d8483928caa4bb83fb4c2627162cf1b8",
+        "s": "0x57dd69f5534bc84b2335e8f8a426c1468384b08079c17a6532915c6bcb5825b5",
+        "v": 28
+      }
+    },
+    {
+      "name": "short_name",
+      "request": {
+        "agent_address": "0xb966992b0783f42b2f78a7a94c8f190f03758a96",
+        "agent_name": "clawguard",
+        "nonce_ms": 1793318400123
+      },
+      "action": {
+        "type": "approveAgent",
+        "agentAddress": "0xB966992B0783F42B2F78a7a94C8F190F03758a96",
+        "agentName": "clawguard",
+        "nonce": 1793318400123,
+        "signatureChainId": "0x66eee",
+        "hyperliquidChain": "Testnet"
+      },
+      "digest": "0x27682c66b12bf15b9c259e1812bca96f382ef1a5b82c9dd040a3e173a93cd361",
+      "signer": "0xd6f91a183f9a36834639c56489825c8a9afcfe45",
+      "signature": {
+        "r": "0xb624b9044c2e13eae846365954e7f39746b510e1840c7de63f4c3941455a6d6a",
+        "s": "0x693aed62c6a2a7314a3d39dece83341b13f1acf530ea05df9efb135de66905d4",
+        "v": 28
+      }
+    }
+  ]
+}

@@ -1,0 +1,52 @@
+# gitleaks configuration for Claw Guard.
+# Testnet only: no real key may ever be committed. The default gitleaks rules stay on; the rules
+# below add the key formats this project handles.
+#   gitleaks git --config .gitleaks.toml .            # history (CI: fetch-depth 0)
+#   gitleaks dir --config .gitleaks-dir.toml .        # working tree, run from the repo root
+# This file has no path allowlist on purpose: in a history scan a file under target/ (or any
+# git-ignored directory) can only be there because someone force-added it, which is exactly the
+# case to catch. .gitleaks-dir.toml extends this file and skips build output for working-tree scans.
+# scripts/gitleaks_selftest.sh checks these rules against throwaway values made at run time.
+# Test vectors hold many bare 32-byte hashes (digests, r/s values, connection ids); the EVM rule
+# is therefore keyword-gated so those never match, while `PRIVATE_KEY=0x…` and friends do.
+
+title = "Claw Guard gitleaks config"
+
+[extend]
+useDefault = true
+
+[[rules]]
+id = "near-ed25519-secret-key"
+description = "NEAR ed25519 secret key (ed25519: + base58 of the 64-byte secret; public keys are ~44 chars)"
+regex = '''ed25519:[1-9A-HJ-NP-Za-km-z]{80,}'''
+keywords = ["ed25519:"]
+tags = ["key", "near"]
+
+[[rules]]
+id = "near-secp256k1-secret-key"
+description = "NEAR secp256k1 secret key: secp256k1: + base58 of the 96-byte key pair (near-api-js) or of the 32-byte secret (near-crypto / near-cli-rs, ~44 chars); 64-byte public keys are ~88 chars and are not matched"
+regex = '''secp256k1:([1-9A-HJ-NP-Za-km-z]{100,}|[1-9A-HJ-NP-Za-km-z]{40,50})(?:[^1-9A-HJ-NP-Za-km-z]|$)'''
+secretGroup = 1
+keywords = ["secp256k1:"]
+tags = ["key", "near"]
+
+[[rules]]
+id = "evm-private-key-assignment"
+description = "EVM private key (32 bytes hex) assigned to a key-like name such as PRIVATE_KEY, privateKey, secret, priv or sk"
+regex = '''(?i)(?:private[_-]?key|secret|priv|(?:^|[^a-z0-9])sk)[a-z0-9_-]{0,24}[^a-z0-9\n]{0,5}["'=: ]+(?:0x)?([0-9a-f]{64})(?:[^0-9a-z]|$)'''
+secretGroup = 1
+keywords = ["private", "secret", "priv", "sk"]
+tags = ["key", "evm"]
+
+[[rules]]
+id = "telegram-bot-token"
+description = "Telegram bot token (<bot id>:<35 chars>), e.g. the alert bot's token; it belongs in offchain/.env only"
+regex = '''(?:^|[^0-9])([0-9]{8,10}:[A-Za-z0-9_-]{35})(?:[^A-Za-z0-9_-]|$)'''
+secretGroup = 1
+tags = ["token", "telegram"]
+
+[[allowlists]]
+description = "Public 20-byte EVM addresses (e.g. the Base Sepolia test USDC contract in the vectors) are not secrets; a private key is 32 bytes"
+targetRules = ["generic-api-key"]
+regexTarget = "secret"
+regexes = ['''^0x[0-9a-fA-F]{40}$''']

@@ -1,0 +1,52 @@
+{
+  "name": "claw-guard-offchain",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Claw Guard off-chain tools (agent, relayer, watcher, CLIs). Prototype. Testnet only. Not audited.",
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=22.22.2 <23"
+  },
+  "scripts": {
+    "setup:sandbox": "tsx src/cli/setup.ts --network sandbox",
+    "setup:testnet": "tsx src/cli/setup.ts --network testnet",
+    "derive": "tsx src/cli/derive.ts",
+    "approve-hl-agent": "tsx src/cli/approve_hl_agent.ts",
+    "agent": "tsx src/agent/index.ts",
+    "relay": "tsx src/cli/relay.ts",
+    "receipts": "tsx src/cli/receipts.ts",
+    "watch": "tsx src/watch/index.ts",
+    "verify-sig": "tsx src/cli/verify_sig.ts",
+    "demo": "tsx src/cli/demo.ts",
+    "gen-testnet-evm-key": "tsx src/cli/gen_testnet_evm_key.ts",
+    "gen-testnet-near-key": "tsx src/cli/gen_testnet_near_key.ts",
+    "test": "vitest run",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "0.135.0",
+    "@msgpack/msgpack": "3.1.3",
+    "@noble/curves": "2.4.0",
+    "@noble/hashes": "2.4.0",
+    "near-api-js": "7.4.0",
+    "near-sandbox": "0.3.4",
+    "tsx": "4.23.15",
+    "viem": "2.57.7"
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "@types/node": "22.20.5",
+    "eslint": "10.12.0",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.71.2",
+    "vite": "8.3.4",
+    "vitest": "5.0.5"
+  },
+  "overrides": {
+    "near-sandbox": {
+      "tar": "7.5.22"
+    }
+  }
+}

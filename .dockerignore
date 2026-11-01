@@ -1,0 +1,25 @@
+# Keeps the Docker build context to a clean checkout: no build output, no installed
+# dependencies, no local secrets, no local sandbox state, no personal submission data.
+
+# Git metadata and local tool settings (the image needs neither)
+.git
+
+# Build output and installed dependencies (the image builds its own)
+**/target
+**/node_modules
+offchain/dist
+offchain/coverage
+**/.venv
+**/__pycache__
+
+# Secrets: keys only ever live in a local .env (testnet only); .env.example is a template
+**/.env
+**/.env.*
+!**/.env.example
+
+# Local sandbox state and logs
+**/.sandbox
+**/*.log
+
+# The submission payload contains personal data
+docs/SUBMISSION_DRAFT.json

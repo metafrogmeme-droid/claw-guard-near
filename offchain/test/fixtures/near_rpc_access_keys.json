@@ -1,0 +1,591 @@
+{
+  "meta": {
+    "note": "Test fixture. Sandbox account ids. Public keys are random 32-byte values (no private key exists); nothing here is a secret.",
+    "format": "NEAR JSON-RPC `query` / `view_access_key_list` responses (nearcore wire format: keys[].public_key, keys[].access_key.{nonce, permission}; permission \"FullAccess\" or {FunctionCall:{allowance, method_names, receiver_id}}).",
+    "provenance": "Transcribed by hand in the nearcore wire format, NOT captured from a live node: downloading the near-sandbox binary was not permitted in the build container. Replace with a capture from `npm run setup:sandbox` when available.",
+    "steps": "Each step is the full state of all four accounts (owner, agent, contract, guardian), in order. Between baseline and agent_full_access_key_added the agent key's nonce rose and its allowance fell (normal use, must not alert); the full-access key on agent-1 is the demo's simulated attacker key (sandbox_patch_state). The guardian holds one function-call key for clawguard.test.near with the method pause only (D-08); from owner_function_call_key_added on, its nonce and allowance show one pause call (normal use, must not alert). guardian_full_access_key_added and guardian_function_call_key_added are the baseline plus one new key on the guardian account (D-10)."
+  },
+  "steps": {
+    "baseline": {
+      "owner.test.near": {
+        "jsonrpc": "2.0",
+        "id": "dontcare",
+        "result": {
+          "block_hash": "Dox5SxFdf1o6mkhnZkcEBK1c4fBiXijNZX52c2t1VoMc",
+          "block_height": 40,
+          "keys": [
+            {
+              "access_key": {
+                "nonce": 11000000,
+                "permission": "FullAccess"
+              },
+              "public_key": "ed25519:5zwYFomiKJvnLrm5cGdnGAcKVqRnH9X2FvnqUBNFMv4g"
+            }
+          ]
+        }
+      },
+      "agent-1.test.near": {
+        "jsonrpc": "2.0",
+        "id": "dontcare",
+        "result": {
+          "block_hash": "Dox5SxFdf1o6mkhnZkcEBK1c4fBiXijNZX52c2t1VoMc",
+          "block_height": 40,
+          "keys": [
+            {
+              "access_key": {
+                "nonce": 14000000,
+                "permission": {
+                  "FunctionCall": {
+                    "allowance": "1000000000000000000000000",
+                    "method_names": [
+                      "propose_order"
+                    ],
+                    "receiver_id": "clawguard.test.near"
+                  }
+                }
+              },
+              "public_key": "ed25519:8UpnTZUsPv9A8AkTnsHwYwfZLmoaAFETm34hMCJVBhiz"
+            }
+          ]
+        }
+      },
+      "clawguard.test.near": {
+        "jsonrpc": "2.0",
+        "id": "dontcare",
+        "result": {
+          "block_hash": "Dox5SxFdf1o6mkhnZkcEBK1c4fBiXijNZX52c2t1VoMc",
+          "block_height": 40,
+          "keys": [
+            {
+              "access_key": {
+                "nonce": 12000000,
+                "permission": "FullAccess"
+              },
+              "public_key": "ed25519:2MG3oDm33XUmL4V3mC1ynWUuUT3XJeJmAEz4V1WboJEz"
+            }
+          ]
+        }
+      },
+      "guardian.test.near": {
+        "jsonrpc": "2.0",
+        "id": "dontcare",
+        "result": {
+          "block_hash": "Dox5SxFdf1o6mkhnZkcEBK1c4fBiXijNZX52c2t1VoMc",
+          "block_height": 40,
+          "keys": [
+            {
+              "access_key": {
+                "nonce": 13000000,
+                "permission": {
+                  "FunctionCall": {
+                    "allowance": "1000000000000000000000000",
+                    "method_names": [
+                      "pause"
+                    ],
+                    "receiver_id": "clawguard.test.near"
+                  }
+                }
+              },
+              "public_key": "ed25519:AURRhsQscYBhjaeLP9yfTVgTTD2AuFzhGFkWsueSHKhw"
+            }
+          ]
+        }
+      }
+    },
+    "agent_full_access_key_added": {
+      "owner.test.near": {
+        "jsonrpc": "2.0",
+        "id": "dontcare",
+        "result": {
+          "block_hash": "E35RRry8ZBvrAZc4mQc8uSJZTofAs3kJv9YvDioX8Xty",
+          "block_height": 45,
+          "keys": [
+            {
+              "access_key": {
+                "nonce": 11000000,
+                "permission": "FullAccess"
+              },
+              "public_key": "ed25519:5zwYFomiKJvnLrm5cGdnGAcKVqRnH9X2FvnqUBNFMv4g"
+            }
+          ]
+        }
+      },
+      "agent-1.test.near": {
+        "jsonrpc": "2.0",
+        "id": "dontcare",
+        "result": {
+          "block_hash": "E35RRry8ZBvrAZc4mQc8uSJZTofAs3kJv9YvDioX8Xty",
+          "block_height": 45,
+          "keys": [
+            {
+              "access_key": {
+                "nonce": 41000000,
+                "permission": "FullAccess"
+              },
+              "public_key": "ed25519:3f2aegFdopmujMSHjouVRV4Q1g6FUc1secyeBJNNm3Qg"
+            },
+            {
+              "access_key": {
+                "nonce": 14000007,
+                "permission": {
+                  "FunctionCall": {
+                    "allowance": "999981234567890000000000",
+                    "method_names": [
+                      "propose_order"
+                    ],
+                    "receiver_id": "clawguard.test.near"
+                  }
+                }
+              },
+              "public_key": "ed25519:8UpnTZUsPv9A8AkTnsHwYwfZLmoaAFETm34hMCJVBhiz"
+            }
+          ]
+        }
+      },
+      "clawguard.test.near": {
+        "jsonrpc": "2.0",
+        "id": "dontcare",
+        "result": {
+          "block_hash": "E35RRry8ZBvrAZc4mQc8uSJZTofAs3kJv9YvDioX8Xty",
+          "block_height": 45,
+          "keys": [
+            {
+              "access_key": {
+                "nonce": 12000000,
+                "permission": "FullAccess"
+              },
+              "public_key": "ed25519:2MG3oDm33XUmL4V3mC1ynWUuUT3XJeJmAEz4V1WboJEz"
+            }
+          ]
+        }
+      },
+      "guardian.test.near": {
+        "jsonrpc": "2.0",
+        "id": "dontcare",
+        "result": {
+          "block_hash": "E35RRry8ZBvrAZc4mQc8uSJZTofAs3kJv9YvDioX8Xty",
+          "block_height": 45,
+          "keys": [
+            {
+              "access_key": {
+                "nonce": 13000000,
+                "permission": {
+                  "FunctionCall": {
+                    "allowance": "1000000000000000000000000",
+                    "method_names": [
+                      "pause"
+                    ],
+                    "receiver_id": "clawguard.test.near"
+                  }
+                }
+              },
+              "public_key": "ed25519:AURRhsQscYBhjaeLP9yfTVgTTD2AuFzhGFkWsueSHKhw"
+            }
+          ]
+        }
+      }
+    },
+    "owner_function_call_key_added": {
+      "owner.test.near": {
+        "jsonrpc": "2.0",
+        "id": "dontcare",
+        "result": {
+          "block_hash": "swputccJfigMwUFsn74HCGurhm9TgkgYGnHV4Kb2HCY",
+          "block_height": 53,
+          "keys": [
+            {
+              "access_key": {
+                "nonce": 52000000,
+                "permission": {
+                  "FunctionCall": {
+                    "allowance": "250000000000000000000000",
+                    "method_names": [
+                      "pause"
+                    ],
+                    "receiver_id": "clawguard.test.near"
+                  }
+                }
+              },
+              "public_key": "ed25519:ApnyVn9TD3G4zqhWkXhnGdc9DQme77GNYft8MXCPEVjC"
+            },
+            {
+              "access_key": {
+                "nonce": 11000000,
+                "permission": "FullAccess"
+              },
+              "public_key": "ed25519:5zwYFomiKJvnLrm5cGdnGAcKVqRnH9X2FvnqUBNFMv4g"
+            }
+          ]
+        }
+      },
+      "agent-1.test.near": {
+        "jsonrpc": "2.0",
+        "id": "dontcare",
+        "result": {
+          "block_hash": "swputccJfigMwUFsn74HCGurhm9TgkgYGnHV4Kb2HCY",
+          "block_height": 53,
+          "keys": [
+            {
+              "access_key": {
+                "nonce": 41000000,
+                "permission": "FullAccess"
+              },
+              "public_key": "ed25519:3f2aegFdopmujMSHjouVRV4Q1g6FUc1secyeBJNNm3Qg"
+            },
+            {
+              "access_key": {
+                "nonce": 14000007,
+                "permission": {
+                  "FunctionCall": {
+                    "allowance": "999981234567890000000000",
+                    "method_names": [
+                      "propose_order"
+                    ],
+                    "receiver_id": "clawguard.test.near"
+                  }
+                }
+              },
+              "public_key": "ed25519:8UpnTZUsPv9A8AkTnsHwYwfZLmoaAFETm34hMCJVBhiz"
+            }
+          ]
+        }
+      },
+      "clawguard.test.near": {
+        "jsonrpc": "2.0",
+        "id": "dontcare",
+        "result": {
+          "block_hash": "swputccJfigMwUFsn74HCGurhm9TgkgYGnHV4Kb2HCY",
+          "block_height": 53,
+          "keys": [
+            {
+              "access_key": {
+                "nonce": 12000000,
+                "permission": "FullAccess"
+              },
+              "public_key": "ed25519:2MG3oDm33XUmL4V3mC1ynWUuUT3XJeJmAEz4V1WboJEz"
+            }
+          ]
+        }
+      },
+      "guardian.test.near": {
+        "jsonrpc": "2.0",
+        "id": "dontcare",
+        "result": {
+          "block_hash": "swputccJfigMwUFsn74HCGurhm9TgkgYGnHV4Kb2HCY",
+          "block_height": 53,
+          "keys": [
+            {
+              "access_key": {
+                "nonce": 13000001,
+                "permission": {
+                  "FunctionCall": {
+                    "allowance": "999712345600000000000000",
+                    "method_names": [
+                      "pause"
+                    ],
+                    "receiver_id": "clawguard.test.near"
+                  }
+                }
+              },
+              "public_key": "ed25519:AURRhsQscYBhjaeLP9yfTVgTTD2AuFzhGFkWsueSHKhw"
+            }
+          ]
+        }
+      }
+    },
+    "contract_key_removed": {
+      "owner.test.near": {
+        "jsonrpc": "2.0",
+        "id": "dontcare",
+        "result": {
+          "block_hash": "AD3xZfhmP6NFTJaCBC69K11L65uTK5Kcch7R3QKbkfSY",
+          "block_height": 60,
+          "keys": [
+            {
+              "access_key": {
+                "nonce": 52000000,
+                "permission": {
+                  "FunctionCall": {
+                    "allowance": "250000000000000000000000",
+                    "method_names": [
+                      "pause"
+                    ],
+                    "receiver_id": "clawguard.test.near"
+                  }
+                }
+              },
+              "public_key": "ed25519:ApnyVn9TD3G4zqhWkXhnGdc9DQme77GNYft8MXCPEVjC"
+            },
+            {
+              "access_key": {
+                "nonce": 11000000,
+                "permission": "FullAccess"
+              },
+              "public_key": "ed25519:5zwYFomiKJvnLrm5cGdnGAcKVqRnH9X2FvnqUBNFMv4g"
+            }
+          ]
+        }
+      },
+      "agent-1.test.near": {
+        "jsonrpc": "2.0",
+        "id": "dontcare",
+        "result": {
+          "block_hash": "AD3xZfhmP6NFTJaCBC69K11L65uTK5Kcch7R3QKbkfSY",
+          "block_height": 60,
+          "keys": [
+            {
+              "access_key": {
+                "nonce": 41000000,
+                "permission": "FullAccess"
+              },
+              "public_key": "ed25519:3f2aegFdopmujMSHjouVRV4Q1g6FUc1secyeBJNNm3Qg"
+            },
+            {
+              "access_key": {
+                "nonce": 14000007,
+                "permission": {
+                  "FunctionCall": {
+                    "allowance": "999981234567890000000000",
+                    "method_names": [
+                      "propose_order"
+                    ],
+                    "receiver_id": "clawguard.test.near"
+                  }
+                }
+              },
+              "public_key": "ed25519:8UpnTZUsPv9A8AkTnsHwYwfZLmoaAFETm34hMCJVBhiz"
+            }
+          ]
+        }
+      },
+      "clawguard.test.near": {
+        "jsonrpc": "2.0",
+        "id": "dontcare",
+        "result": {
+          "block_hash": "AD3xZfhmP6NFTJaCBC69K11L65uTK5Kcch7R3QKbkfSY",
+          "block_height": 60,
+          "keys": []
+        }
+      },
+      "guardian.test.near": {
+        "jsonrpc": "2.0",
+        "id": "dontcare",
+        "result": {
+          "block_hash": "AD3xZfhmP6NFTJaCBC69K11L65uTK5Kcch7R3QKbkfSY",
+          "block_height": 60,
+          "keys": [
+            {
+              "access_key": {
+                "nonce": 13000001,
+                "permission": {
+                  "FunctionCall": {
+                    "allowance": "999712345600000000000000",
+                    "method_names": [
+                      "pause"
+                    ],
+                    "receiver_id": "clawguard.test.near"
+                  }
+                }
+              },
+              "public_key": "ed25519:AURRhsQscYBhjaeLP9yfTVgTTD2AuFzhGFkWsueSHKhw"
+            }
+          ]
+        }
+      }
+    },
+    "guardian_full_access_key_added": {
+      "owner.test.near": {
+        "jsonrpc": "2.0",
+        "id": "dontcare",
+        "result": {
+          "block_hash": "7nG3uBVvVSZ5rV1uYy6GvwxV8yYF1FB7n6h2u5AvGkqE",
+          "block_height": 64,
+          "keys": [
+            {
+              "access_key": {
+                "nonce": 11000000,
+                "permission": "FullAccess"
+              },
+              "public_key": "ed25519:5zwYFomiKJvnLrm5cGdnGAcKVqRnH9X2FvnqUBNFMv4g"
+            }
+          ]
+        }
+      },
+      "agent-1.test.near": {
+        "jsonrpc": "2.0",
+        "id": "dontcare",
+        "result": {
+          "block_hash": "7nG3uBVvVSZ5rV1uYy6GvwxV8yYF1FB7n6h2u5AvGkqE",
+          "block_height": 64,
+          "keys": [
+            {
+              "access_key": {
+                "nonce": 14000000,
+                "permission": {
+                  "FunctionCall": {
+                    "allowance": "1000000000000000000000000",
+                    "method_names": [
+                      "propose_order"
+                    ],
+                    "receiver_id": "clawguard.test.near"
+                  }
+                }
+              },
+              "public_key": "ed25519:8UpnTZUsPv9A8AkTnsHwYwfZLmoaAFETm34hMCJVBhiz"
+            }
+          ]
+        }
+      },
+      "clawguard.test.near": {
+        "jsonrpc": "2.0",
+        "id": "dontcare",
+        "result": {
+          "block_hash": "7nG3uBVvVSZ5rV1uYy6GvwxV8yYF1FB7n6h2u5AvGkqE",
+          "block_height": 64,
+          "keys": [
+            {
+              "access_key": {
+                "nonce": 12000000,
+                "permission": "FullAccess"
+              },
+              "public_key": "ed25519:2MG3oDm33XUmL4V3mC1ynWUuUT3XJeJmAEz4V1WboJEz"
+            }
+          ]
+        }
+      },
+      "guardian.test.near": {
+        "jsonrpc": "2.0",
+        "id": "dontcare",
+        "result": {
+          "block_hash": "7nG3uBVvVSZ5rV1uYy6GvwxV8yYF1FB7n6h2u5AvGkqE",
+          "block_height": 64,
+          "keys": [
+            {
+              "access_key": {
+                "nonce": 13000000,
+                "permission": {
+                  "FunctionCall": {
+                    "allowance": "1000000000000000000000000",
+                    "method_names": [
+                      "pause"
+                    ],
+                    "receiver_id": "clawguard.test.near"
+                  }
+                }
+              },
+              "public_key": "ed25519:AURRhsQscYBhjaeLP9yfTVgTTD2AuFzhGFkWsueSHKhw"
+            },
+            {
+              "access_key": {
+                "nonce": 64000000,
+                "permission": "FullAccess"
+              },
+              "public_key": "ed25519:HXyAv32TwzJGGmV9joevFiq6Sg5aQuRiUgCewy2vHSjg"
+            }
+          ]
+        }
+      }
+    },
+    "guardian_function_call_key_added": {
+      "owner.test.near": {
+        "jsonrpc": "2.0",
+        "id": "dontcare",
+        "result": {
+          "block_hash": "7nG3uBVvVSZ5rV1uYy6GvwxV8yYF1FB7n6h2u5AvGkqE",
+          "block_height": 64,
+          "keys": [
+            {
+              "access_key": {
+                "nonce": 11000000,
+                "permission": "FullAccess"
+              },
+              "public_key": "ed25519:5zwYFomiKJvnLrm5cGdnGAcKVqRnH9X2FvnqUBNFMv4g"
+            }
+          ]
+        }
+      },
+      "agent-1.test.near": {
+        "jsonrpc": "2.0",
+        "id": "dontcare",
+        "result": {
+          "block_hash": "7nG3uBVvVSZ5rV1uYy6GvwxV8yYF1FB7n6h2u5AvGkqE",
+          "block_height": 64,
+          "keys": [
+            {
+              "access_key": {
+                "nonce": 14000000,
+                "permission": {
+                  "FunctionCall": {
+                    "allowance": "1000000000000000000000000",
+                    "method_names": [
+                      "propose_order"
+                    ],
+                    "receiver_id": "clawguard.test.near"
+                  }
+                }
+              },
+              "public_key": "ed25519:8UpnTZUsPv9A8AkTnsHwYwfZLmoaAFETm34hMCJVBhiz"
+            }
+          ]
+        }
+      },
+      "clawguard.test.near": {
+        "jsonrpc": "2.0",
+        "id": "dontcare",
+        "result": {
+          "block_hash": "7nG3uBVvVSZ5rV1uYy6GvwxV8yYF1FB7n6h2u5AvGkqE",
+          "block_height": 64,
+          "keys": [
+            {
+              "access_key": {
+                "nonce": 12000000,
+                "permission": "FullAccess"
+              },
+              "public_key": "ed25519:2MG3oDm33XUmL4V3mC1ynWUuUT3XJeJmAEz4V1WboJEz"
+            }
+          ]
+        }
+      },
+      "guardian.test.near": {
+        "jsonrpc": "2.0",
+        "id": "dontcare",
+        "result": {
+          "block_hash": "7nG3uBVvVSZ5rV1uYy6GvwxV8yYF1FB7n6h2u5AvGkqE",
+          "block_height": 64,
+          "keys": [
+            {
+              "access_key": {
+                "nonce": 13000000,
+                "permission": {
+                  "FunctionCall": {
+                    "allowance": "1000000000000000000000000",
+                    "method_names": [
+                      "pause"
+                    ],
+                    "receiver_id": "clawguard.test.near"
+                  }
+                }
+              },
+              "public_key": "ed25519:AURRhsQscYBhjaeLP9yfTVgTTD2AuFzhGFkWsueSHKhw"
+            },
+            {
+              "access_key": {
+                "nonce": 64000000,
+                "permission": {
+                  "FunctionCall": {
+                    "allowance": "1000000000000000000000000",
+                    "method_names": [
+                      "propose_order"
+                    ],
+                    "receiver_id": "clawguard.test.near"
+                  }
+                }
+              },
+              "public_key": "ed25519:CLMeokgV3a54E6hvc3byWRP8k3qX44MEFQYzCGMNe3R"
+            }
+          ]
+        }
+      }
+    }
+  }
+}

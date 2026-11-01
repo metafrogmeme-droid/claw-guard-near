@@ -1,0 +1,114 @@
+{
+  "meta": {
+    "generator": "scripts/hl_vectors.py",
+    "sdk": "hyperliquid-python-sdk==0.24.0",
+    "is_mainnet": false,
+    "note": "Testnet only. Test key derived from a public label; worthless."
+  },
+  "vectors": [
+    {
+      "name": "btc_cross_3x",
+      "request": {
+        "coin_asset": 3,
+        "is_cross": true,
+        "leverage": 3
+      },
+      "action": {
+        "type": "updateLeverage",
+        "asset": 3,
+        "isCross": true,
+        "leverage": 3
+      },
+      "action_json": "{\"type\":\"updateLeverage\",\"asset\":3,\"isCross\":true,\"leverage\":3}",
+      "msgpack_hex": "84a474797065ae7570646174654c65766572616765a5617373657403a7697343726f7373c3a86c6576657261676503",
+      "nonce_ms": 1793318400100,
+      "source": "b",
+      "connection_id": "0x9db441b01c54ad08a3f6345f9d7e2be02e75f8e9eb85e3d0c4a774d5a8ec34be",
+      "digest": "0x9fa4c052be3e02f2aa09c4b6b687809646ae79857cad8904b3ebadf8fba6cc1f",
+      "signer": "0xd6f91a183f9a36834639c56489825c8a9afcfe45",
+      "signature": {
+        "r": "0xed6f231096363cd1ae0e48006d9c729c2601a5648a80ec3280757a382ce442c3",
+        "s": "0x61f6327250990e5b66694c60fb7c82c4000fb9fd8eb2f7db62a46d0e500eec01",
+        "v": 28
+      }
+    },
+    {
+      "name": "btc_isolated_1x",
+      "request": {
+        "coin_asset": 3,
+        "is_cross": false,
+        "leverage": 1
+      },
+      "action": {
+        "type": "updateLeverage",
+        "asset": 3,
+        "isCross": false,
+        "leverage": 1
+      },
+      "action_json": "{\"type\":\"updateLeverage\",\"asset\":3,\"isCross\":false,\"leverage\":1}",
+      "msgpack_hex": "84a474797065ae7570646174654c65766572616765a5617373657403a7697343726f7373c2a86c6576657261676501",
+      "nonce_ms": 1793318400101,
+      "source": "b",
+      "connection_id": "0x9c98cad09ce4ba4f4ba31b9a8a0679d6782355fcb9b450055824b3ea4d35e116",
+      "digest": "0x4e1f8f3345bbc67d45dad96918c05e13b67acd6f91bde197bb8c73355f168b1e",
+      "signer": "0xd6f91a183f9a36834639c56489825c8a9afcfe45",
+      "signature": {
+        "r": "0x7ab1123ed8017a23ebadd9b149704b06a8236d1c3ce26f8e5c924d787997f10b",
+        "s": "0x2acaee892d2c39bfd77e60e85bcd7c93f9a306cccd81e91487f1c7fff57b4a05",
+        "v": 27
+      }
+    },
+    {
+      "name": "eth_cross_50x",
+      "request": {
+        "coin_asset": 4,
+        "is_cross": true,
+        "leverage": 50
+      },
+      "action": {
+        "type": "updateLeverage",
+        "asset": 4,
+        "isCross": true,
+        "leverage": 50
+      },
+      "action_json": "{\"type\":\"updateLeverage\",\"asset\":4,\"isCross\":true,\"leverage\":50}",
+      "msgpack_hex": "84a474797065ae7570646174654c65766572616765a5617373657404a7697343726f7373c3a86c6576657261676532",
+      "nonce_ms": 1793318400102,
+      "source": "b",
+      "connection_id": "0x43e9e49562d912965f6e349172f1fc0e965b9d849bb1b6f75d6bd2fc00946771",
+      "digest": "0x80a3caac0a0c1571d233da2099108f783e7be5a600a19b727af8a018a1272031",
+      "signer": "0xd6f91a183f9a36834639c56489825c8a9afcfe45",
+      "signature": {
+        "r": "0xf7302d81c5fe0547ca510061abfeda44ce3c711d0b0f26cd7dfa49a48f1915a",
+        "s": "0x43de7497b278bd4f6f8dd889459595efc77efe776d6c5c9f256997ebdc9a758",
+        "v": 28
+      }
+    },
+    {
+      "name": "asset200_isolated_20x",
+      "request": {
+        "coin_asset": 200,
+        "is_cross": false,
+        "leverage": 20
+      },
+      "action": {
+        "type": "updateLeverage",
+        "asset": 200,
+        "isCross": false,
+        "leverage": 20
+      },
+      "action_json": "{\"type\":\"updateLeverage\",\"asset\":200,\"isCross\":false,\"leverage\":20}",
+      "msgpack_hex": "84a474797065ae7570646174654c65766572616765a56173736574ccc8a7697343726f7373c2a86c6576657261676514",
+      "nonce_ms": 1793318400103,
+      "source": "b",
+      "connection_id": "0x9444e4e7123be29d2c3c37f37e9b628d09bbdf72afe78d10b893b23e5b37cf3e",
+      "digest": "0x4bd622994b339e74f7b49364707fae5bae66760c0ba5883c7deee4809c747a3f",
+      "signer": "0xd6f91a183f9a36834639c56489825c8a9afcfe45",
+      "signature": {
+        "r": "0x204dfce94d197d53500366d42e98ccdc71b23af255dc43312beae2e1b8bbe25",
+        "s": "0xfd0d4d90e616fa038115611627a821b8af51ca3eb1e0bc66b547967c9e8208c",
+        "v": 28
+      }
+    }
+  ]
+}

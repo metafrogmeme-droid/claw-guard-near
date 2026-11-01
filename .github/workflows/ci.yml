@@ -1,0 +1,446 @@
+# CI for Claw Guard: Signing Gate for AI Agents. Prototype. Not audited.
+#
+# Sandbox and offline checks only: no repository secrets, no NEAR testnet, Hyperliquid or Base
+# Sepolia job, ever. The only token in use is the read-only GITHUB_TOKEN the actions
+# get by default (`permissions: contents: read`); checkout does not keep it in .git/config.
+#
+# Jobs: rust (fmt, clippy, unit tests, wasm build) · sandbox (near-workspaces tests + fd-limit
+# fallback tests) · offchain (eslint, tsc, vitest) · copy-lint · gitleaks (full history) ·
+# demo-smoke (`make demo`) · docker (image build + `make demo` inside it) · reproducible
+# (cargo near reproducible-wasm in the pinned image, default and mainnet variants, uploaded as
+# the `claw-guard-wasm-<sha>` artifact). rust and reproducible also check every wasm against the
+# mainnet protocol-86 host-function allowlist (D-21).
+#
+# Pinned versions (newest releases published at least 14 days before 30 Oct 2026):
+#   - Actions are pinned to full commit SHAs, with the tag in a comment. GitHub's API is not
+#     reachable from the build container, so each tag was resolved through the Go module proxy's
+#     record of that tag (proxy.golang.org/github.com/actions/<name>/@v/<tag>+incompatible.info,
+#     31 Oct 2026; it reproduces the known checkout v4.2.2 SHA) and checked to exist with
+#     raw.githubusercontent.com/actions/<name>/<sha>/action.yml. setup-node v7.1.0 is the
+#     youngest (commit of 8 Oct 2026); its tag date itself could not be read here.
+#   - Rust 1.97 from rust-toolchain.toml (owner decision D-02); cargo-near 0.22.0 (--locked).
+#   - Node from .nvmrc (22.22.2, owner decision D-06).
+#   - gitleaks v8.30.1 built with `go install` (module checksums verified through sum.golang.org),
+#     Go 1.27.2. No gitleaks-action, so no organisation licence key is involved.
+#
+# Open-files limit (owner decision D-13): the sandbox node needs a hard limit of 65535. Hosted
+# runners normally have that, so scripts/sandbox_env.sh passes commands through unchanged; on a
+# host with a lower limit it switches to the scripts/fdlimit fallback and prints one line. The
+# docker job also runs the demo once with a low limit to exercise that fallback.
+
+name: ci
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.event_name }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+defaults:
+  run:
+    shell: bash
+
+env:
+  CARGO_TERM_COLOR: always
+  CARGO_INCREMENTAL: "0"
+  # Smaller and faster debug builds in CI; backtraces keep file and line numbers.
+  CARGO_PROFILE_DEV_DEBUG: line-tables-only
+  # scripts/build_contracts.sh passes --locked to cargo when this is 1.
+  CLAWGUARD_LOCKED: "1"
+  CARGO_NEAR_VERSION: 0.22.0
+  GITLEAKS_VERSION: v8.30.1
+
+jobs:
+  rust:
+    name: rust (fmt, clippy, unit tests, wasm build)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - name: Check out
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Install Rust 1.97 from rust-toolchain.toml
+        run: |
+          rustup toolchain install --no-self-update
+          rustc --version
+          cargo --version
+
+      - name: Cache cargo registry and target/
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: |
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+          key: rust-ubuntu-24.04-${{ runner.arch }}-${{ hashFiles('rust-toolchain.toml', 'Cargo.lock') }}
+          restore-keys: rust-ubuntu-24.04-${{ runner.arch }}-
+
+      - name: cargo fmt --check
+        run: cargo fmt --all -- --check
+
+      - name: cargo clippy -D warnings
+        run: cargo clippy --workspace --all-targets --locked -- -D warnings
+
+      - name: Unit tests (claw-guard, mock-mpc)
+        run: cargo test --locked -p claw-guard -p mock-mpc
+
+      # docs/MAINNET.md: the mainnet build differs only in the network check of `new`.
+      - name: Unit tests and clippy, claw-guard with --features mainnet
+        run: |
+          cargo test --locked -p claw-guard --features mainnet
+          cargo clippy --locked -p claw-guard --all-targets --features mainnet -- -D warnings
+
+      - name: Cache cargo-near ${{ env.CARGO_NEAR_VERSION }}
+        id: cargo-near-cache
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.cargo/bin/cargo-near
+          key: cargo-near-${{ env.CARGO_NEAR_VERSION }}-ubuntu-24.04-${{ runner.arch }}-${{ hashFiles('rust-toolchain.toml') }}
+
+      - name: Install cargo-near ${{ env.CARGO_NEAR_VERSION }} (cache miss only)
+        if: steps.cargo-near-cache.outputs.cache-hit != 'true'
+        run: |
+          # cargo-near links libudev (Ledger support) and finds it with pkg-config.
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends libudev-dev pkg-config
+          # Its own CARGO_HOME keeps cargo-near's dependencies out of the registry cache above.
+          CARGO_HOME="$RUNNER_TEMP/cargo-near-home" \
+            cargo install cargo-near --version "$CARGO_NEAR_VERSION" --locked --root "$HOME/.cargo"
+
+      - name: Build both contracts (cargo near build non-reproducible-wasm)
+        env:
+          CLAWGUARD_FORCE_BUILD: "1"
+        run: |
+          cargo near --version
+          bash scripts/build_contracts.sh
+          ls -l target/near/claw_guard/claw_guard.wasm target/near/mock_mpc/mock_mpc.wasm
+          sha256sum target/near/claw_guard/claw_guard.wasm target/near/mock_mpc/mock_mpc.wasm
+
+      # D-21: mainnet (protocol 86 on 1 Nov 2026) refuses a wasm that imports a newer host
+      # function at link time. Fails if any wasm imports one outside the protocol-86 allowlist.
+      - name: Host-function allowlist, mainnet protocol 86 (D-21)
+        run: |
+          python3 scripts/check_wasm_imports.py --self-test
+          cargo near build non-reproducible-wasm --manifest-path contracts/claw-guard/Cargo.toml \
+            --locked --features mainnet --out-dir target/near-mainnet-check
+          python3 scripts/check_wasm_imports.py target/near/claw_guard/claw_guard.wasm \
+            target/near/mock_mpc/mock_mpc.wasm target/near-mainnet-check/claw_guard.wasm
+
+  sandbox:
+    name: sandbox (near-workspaces integration tests)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - name: Check out
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Install Rust 1.97 from rust-toolchain.toml
+        run: |
+          rustup toolchain install --no-self-update
+          rustc --version
+          cargo --version
+
+      # target/ also holds the sandbox node (neard 2.14.0) that the near-sandbox crate downloads
+      # at build time into its OUT_DIR (target/debug/build/near-sandbox-*/out/.near/), so a
+      # cache hit skips that download as well.
+      - name: Cache cargo registry, target/ and the sandbox binary
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: |
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+          key: sandbox-ubuntu-24.04-${{ runner.arch }}-${{ hashFiles('rust-toolchain.toml', 'Cargo.lock') }}
+          restore-keys: sandbox-ubuntu-24.04-${{ runner.arch }}-
+
+      - name: Cache cargo-near ${{ env.CARGO_NEAR_VERSION }}
+        id: cargo-near-cache
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.cargo/bin/cargo-near
+          key: cargo-near-${{ env.CARGO_NEAR_VERSION }}-ubuntu-24.04-${{ runner.arch }}-${{ hashFiles('rust-toolchain.toml') }}
+
+      - name: Install cargo-near ${{ env.CARGO_NEAR_VERSION }} (cache miss only)
+        if: steps.cargo-near-cache.outputs.cache-hit != 'true'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends libudev-dev pkg-config
+          CARGO_HOME="$RUNNER_TEMP/cargo-near-home" \
+            cargo install cargo-near --version "$CARGO_NEAR_VERSION" --locked --root "$HOME/.cargo"
+
+      # The tests build both contracts first (scripts/build_contracts.sh, cargo-near) and start one
+      # local sandbox node per test. sandbox_env.sh is the same prefix `make test` uses (D-13).
+      - name: Sandbox tests (cargo test -p claw-guard-tests)
+        run: |
+          ulimit -Sn
+          ulimit -Hn
+          bash scripts/sandbox_env.sh cargo test --locked -p claw-guard-tests
+
+      - name: fd-limit fallback tests (tests/fdlimit/test.sh)
+        run: bash tests/fdlimit/test.sh
+
+  offchain:
+    name: offchain (eslint, tsc, vitest)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Check out
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Set up Node from .nvmrc
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: offchain/package-lock.json
+
+      - name: npm ci
+        working-directory: offchain
+        run: |
+          node --version
+          npm --version
+          npm ci --no-audit --no-fund
+
+      # Q-32: fail on any published advisory in a runtime dependency (dev tools are recorded in
+      # docs/VERIFY.md section (b)).
+      - name: npm audit (runtime dependencies)
+        working-directory: offchain
+        run: npm audit --omit=dev
+
+      - name: eslint
+        working-directory: offchain
+        run: npm run lint
+
+      - name: tsc --noEmit
+        working-directory: offchain
+        run: npm run typecheck
+
+      - name: vitest
+        working-directory: offchain
+        run: npm test
+
+  copy-lint:
+    name: copy-lint
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Check out
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Set up Node from .nvmrc
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: offchain/package-lock.json
+
+      # The copy lint reads only string literals of .ts files, with the TypeScript parser from
+      # offchain/node_modules (without it, it would check whole lines).
+      - name: npm ci
+        working-directory: offchain
+        run: npm ci --no-audit --no-fund
+
+      - name: scripts/copy_lint.sh
+        run: bash scripts/copy_lint.sh
+
+  gitleaks:
+    name: gitleaks (full history)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Check out (full history)
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Set up Go
+        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version: "1.27.2"
+          cache: false
+
+      - name: Install gitleaks ${{ env.GITLEAKS_VERSION }}
+        run: |
+          GOBIN="$RUNNER_TEMP/bin" go install "github.com/zricethezav/gitleaks/v8@$GITLEAKS_VERSION"
+          echo "$RUNNER_TEMP/bin" >>"$GITHUB_PATH"
+
+      # Every commit reachable from the checked-out commit, scanned with the repo's rules
+      # (.gitleaks.toml: default rules + NEAR keys, EVM keys, Telegram bot tokens). Findings are
+      # printed redacted and fail the job.
+      - name: gitleaks git
+        run: gitleaks git --config .gitleaks.toml --redact --no-banner --verbose .
+
+      # The rules themselves, against random throwaway values made at run time (nothing
+      # key-shaped is committed): NEAR secp256k1 32- and 96-byte secrets, force-added files under
+      # target/ in a history scan, and the working-tree config (.gitleaks-dir.toml).
+      - name: gitleaks rules self-test
+        run: bash scripts/gitleaks_selftest.sh
+
+  demo-smoke:
+    name: demo-smoke (make demo)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - name: Check out
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Install Rust 1.97 from rust-toolchain.toml
+        run: |
+          rustup toolchain install --no-self-update
+          rustc --version
+
+      - name: Set up Node from .nvmrc
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: offchain/package-lock.json
+
+      # Downloads only: target/ is not cached, so `make demo` builds the contracts like a fresh clone.
+      - name: Cache cargo registry
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: |
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+          key: demo-registry-ubuntu-24.04-${{ runner.arch }}-${{ hashFiles('Cargo.lock') }}
+          restore-keys: demo-registry-ubuntu-24.04-${{ runner.arch }}-
+
+      - name: Cache cargo-near ${{ env.CARGO_NEAR_VERSION }}
+        id: cargo-near-cache
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.cargo/bin/cargo-near
+          key: cargo-near-${{ env.CARGO_NEAR_VERSION }}-ubuntu-24.04-${{ runner.arch }}-${{ hashFiles('rust-toolchain.toml') }}
+
+      - name: Install cargo-near ${{ env.CARGO_NEAR_VERSION }} (cache miss only)
+        if: steps.cargo-near-cache.outputs.cache-hit != 'true'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends libudev-dev pkg-config
+          CARGO_HOME="$RUNNER_TEMP/cargo-near-home" \
+            cargo install cargo-near --version "$CARGO_NEAR_VERSION" --locked --root "$HOME/.cargo"
+
+      # Owner decision D-13: on a runner with the normal open-files limit (65535 or more) the
+      # fd-limit shim must not load, so the demo must not print its line.
+      - name: make demo
+        timeout-minutes: 15
+        run: |
+          echo "open-files hard limit on this runner: $(ulimit -Hn)"
+          make demo 2>&1 | tee "$RUNNER_TEMP/demo.log"
+          tail -n 1 "$RUNNER_TEMP/demo.log" | grep -E '^DEMO OK \('
+          if grep -F 'running the sandbox through scripts/fdlimit' "$RUNNER_TEMP/demo.log"; then
+            echo "unexpected: the fd-limit shim loaded on a normal-limit runner" >&2
+            exit 1
+          fi
+
+  docker:
+    name: docker (build image, make demo inside)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 75
+    steps:
+      - name: Check out
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: docker build
+        timeout-minutes: 50
+        run: docker build --progress=plain -t claw-guard:ci .
+
+      - name: docker run make demo (open-files limit 65535)
+        timeout-minutes: 15
+        run: |
+          docker run --rm --init --ulimit nofile=65535:65535 claw-guard:ci make demo 2>&1 | tee "$RUNNER_TEMP/demo.log"
+          tail -n 1 "$RUNNER_TEMP/demo.log" | grep -E '^DEMO OK \('
+          if grep -F 'running the sandbox through scripts/fdlimit' "$RUNNER_TEMP/demo.log"; then
+            echo "unexpected: the fd-limit fallback ran although the limit is 65535" >&2
+            exit 1
+          fi
+
+      # Owner decision D-13: below 65535 the sandbox node runs through scripts/fdlimit and the
+      # run prints exactly one line saying so.
+      - name: docker run make demo (open-files limit 20000, fd-limit fallback)
+        timeout-minutes: 15
+        run: |
+          docker run --rm --init --ulimit nofile=20000:20000 claw-guard:ci make demo 2>&1 | tee "$RUNNER_TEMP/demo-low.log"
+          tail -n 1 "$RUNNER_TEMP/demo-low.log" | grep -E '^DEMO OK \('
+          count="$(grep -cxF 'make: open-files hard limit is 20000 (< 65535): running the sandbox through scripts/fdlimit (sandbox only)' "$RUNNER_TEMP/demo-low.log" || true)"
+          if [[ "$count" != 1 ]]; then
+            echo "expected the fd-limit line exactly once, found it $count times" >&2
+            exit 1
+          fi
+
+  # Q-30: the reproducible build in the pinned sourcescan/cargo-near image (Cargo.toml metadata),
+  # default and `mainnet` variants. Prints the sha256 of both wasm files for docs/MAINNET.md.
+  reproducible:
+    name: reproducible (cargo near reproducible-wasm, default and mainnet)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - name: Check out
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Install cargo-near ${{ env.CARGO_NEAR_VERSION }} (published binary, sha256 checked)
+        env:
+          CARGO_NEAR_SHA256: 9429064e30a427e96523f539cb255f3688d2345e5000d7d4e4873a8247247d1a
+        run: |
+          url="https://github.com/near/cargo-near/releases/download/cargo-near-v${CARGO_NEAR_VERSION}/cargo-near-x86_64-unknown-linux-gnu.tar.gz"
+          curl -fsSL --retry 3 -o "$RUNNER_TEMP/cargo-near.tgz" "$url"
+          echo "$CARGO_NEAR_SHA256  $RUNNER_TEMP/cargo-near.tgz" | sha256sum -c -
+          tar -xzf "$RUNNER_TEMP/cargo-near.tgz" -C "$RUNNER_TEMP"
+          install -m 0755 "$RUNNER_TEMP/cargo-near-x86_64-unknown-linux-gnu/cargo-near" "$HOME/.cargo/bin/cargo-near"
+          cargo near --version
+
+      - name: Reproducible build, default (testnet-only) wasm
+        timeout-minutes: 20
+        run: |
+          cargo near build reproducible-wasm --manifest-path contracts/claw-guard/Cargo.toml --out-dir "$RUNNER_TEMP/repro-default"
+          ls -l "$RUNNER_TEMP/repro-default/claw_guard.wasm"
+          sha256sum "$RUNNER_TEMP/repro-default/claw_guard.wasm"
+
+      - name: Reproducible build, mainnet variant
+        timeout-minutes: 20
+        run: |
+          cargo near build reproducible-wasm --variant mainnet --manifest-path contracts/claw-guard/Cargo.toml --out-dir "$RUNNER_TEMP/repro-mainnet"
+          ls -l "$RUNNER_TEMP/repro-mainnet/claw_guard.wasm"
+          sha256sum "$RUNNER_TEMP/repro-mainnet/claw_guard.wasm"
+
+      - name: Host-function allowlist on both reproducible wasm files (D-21)
+        run: |
+          python3 scripts/check_wasm_imports.py "$RUNNER_TEMP/repro-default/claw_guard.wasm" \
+            "$RUNNER_TEMP/repro-mainnet/claw_guard.wasm"
+          mkdir -p "$RUNNER_TEMP/repro-out"
+          cp "$RUNNER_TEMP/repro-default/claw_guard.wasm" "$RUNNER_TEMP/repro-out/claw_guard.default.wasm"
+          cp "$RUNNER_TEMP/repro-mainnet/claw_guard.wasm" "$RUNNER_TEMP/repro-out/claw_guard.mainnet.wasm"
+          (cd "$RUNNER_TEMP/repro-out" && sha256sum claw_guard.*.wasm | tee SHA256SUMS)
+
+      # The mainnet deploy uses this exact file (scripts/deploy-mainnet.sh WASM=..., docs/MAINNET.md).
+      - name: Upload the reproducible wasm files
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: claw-guard-wasm-${{ github.sha }}
+          path: ${{ runner.temp }}/repro-out/
+          if-no-files-found: error
+          retention-days: 90

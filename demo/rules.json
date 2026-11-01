@@ -1,0 +1,18 @@
+{
+  "_comment": "Demo rules for agent-1 (sandbox and testnet), the same numbers as demo_rules() in tests/common/mod.rs. setup fills expires_at_ns with block time + 7 days and drops this comment. Units: max_order_notional and daily_cap are 1e-6 quote units (per-order cap 500, daily cap 1200, one daily counter shared by both targets); max_per_order is raw token units (USDC has 6 decimals, so 5 USDC per transfer). The one receiver is the owner test address of the EVM vectors.",
+  "targets": ["HlTestnet", "BaseSepolia"],
+  "markets": [
+    { "name": "BTC", "asset": 3, "max_order_sz": "0.01", "sz_decimals": 5 },
+    { "name": "ETH", "asset": 4, "max_order_sz": "0.1", "sz_decimals": 4 }
+  ],
+  "max_order_notional": "500000000",
+  "max_leverage": 3,
+  "tokens": [
+    { "symbol": "USDC", "address": "0x036cbd53842c5426634e7929541ec2318f3dcf7e", "decimals": 6, "max_per_order": "5000000" }
+  ],
+  "receivers": ["0x1111111111111111111111111111111111111111"],
+  "daily_cap": "1200000000",
+  "max_orders_per_day": 10,
+  "expires_at_ns": "<set by setup: block time + 7 days>",
+  "reduce_only_required": false
+}

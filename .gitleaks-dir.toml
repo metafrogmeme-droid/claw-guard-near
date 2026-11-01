@@ -1,0 +1,27 @@
+# gitleaks configuration for WORKING-TREE scans only; run from the repo root:
+#   gitleaks dir --config .gitleaks-dir.toml .
+# It extends .gitleaks.toml (all rules) and skips dependencies and build output, which are
+# git-ignored and never committed. Do not use it for history scans: CI runs
+# `gitleaks git --config .gitleaks.toml`, which has no path allowlist, so a force-added file under
+# target/ is still reported. (gitleaks reads extend.path relative to the current directory.)
+
+title = "Claw Guard gitleaks config (working tree)"
+
+[extend]
+path = ".gitleaks.toml"
+
+# gitleaks does not carry a rule-targeted allowlist through `extend`, so this one is repeated
+# from .gitleaks.toml (keep the two in sync).
+[[allowlists]]
+description = "Public 20-byte EVM addresses (e.g. the Base Sepolia test USDC contract in the vectors) are not secrets; a private key is 32 bytes"
+targetRules = ["generic-api-key"]
+regexTarget = "secret"
+regexes = ['''^0x[0-9a-fA-F]{40}$''']
+
+[[allowlists]]
+description = "Dependencies and build output are never committed (git-ignored); skip them in `gitleaks dir` scans"
+paths = [
+  '''(?:^|/)node_modules/''',
+  '''(?:^|/)target/''',
+  '''(?:^|/)\.git/''',
+]

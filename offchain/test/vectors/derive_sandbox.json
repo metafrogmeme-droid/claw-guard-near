@@ -1,0 +1,38 @@
+{
+  "meta": {
+    "note": "SANDBOX ONLY. sandbox test key, worthless, never use anywhere else. The mock-mpc scalar is keccak256(preimage) from a public label by design; it is not stored here, tests recompute it.",
+    "generator": "throwaway script using viem@2.57.7 keccak256 + privateKeyToAccount",
+    "generated_on": "2026-10-30",
+    "formula": "sk = keccak256(utf8('clawguard-sandbox-only:' + predecessor + ',' + path)); address = viem privateKeyToAccount(sk).address"
+  },
+  "vectors": [
+    {
+      "predecessor": "clawguard.test.near",
+      "path": "hl-testnet-1",
+      "preimage": "clawguard-sandbox-only:clawguard.test.near,hl-testnet-1",
+      "uncompressed_pk": "0x04caaf415f2b142741aec0af5fd090fbfa2fea174a9f19aeff76e1fb60071afef037a009fcf0938908e0d3f7e1f04828be1d4b8f28012789aed29dc80792d87460",
+      "evm_address": "0xb966992b0783f42b2f78a7a94c8f190f03758a96"
+    },
+    {
+      "predecessor": "clawguard.test.near",
+      "path": "base-sepolia-1",
+      "preimage": "clawguard-sandbox-only:clawguard.test.near,base-sepolia-1",
+      "uncompressed_pk": "0x04b97f595c4ab0e9cb6a8ba56c9e293430074a4ac7d5a6c5ae4e7e545c6ab433c955dfeaf6c5b760482fdd82f3d211f945c9f36e9168863f2ac52f1004857b27aa",
+      "evm_address": "0x208293469e00a4e3775e131195b9a2e876202f60"
+    },
+    {
+      "predecessor": "agent-1.test.near",
+      "path": "hl-testnet-1",
+      "preimage": "clawguard-sandbox-only:agent-1.test.near,hl-testnet-1",
+      "uncompressed_pk": "0x04381e6595d173b317c8e0cd52e50950390b19e33d1e56f5ab72490b2135f0386a1df1dabc58ed0b223af0307c2d6468c9bac0c9f1ae3621830b047af0303cbbf5",
+      "evm_address": "0x6107927f45a1beed2ee29877f9f6f1d8861ae30c"
+    },
+    {
+      "predecessor": "owner.test.near",
+      "path": "hl-testnet-1",
+      "preimage": "clawguard-sandbox-only:owner.test.near,hl-testnet-1",
+      "uncompressed_pk": "0x040abb561a8dde18444d16949e0408c92ded0ddc4af208c127c633a222e8cadc1cb70e0e825bcf403e0b1c314826fd2603e2a6c226fa3bad35fde4103b6e5a5bce",
+      "evm_address": "0x371ec5c92e20d361d01c49aec2c1dba120a305d6"
+    }
+  ]
+}

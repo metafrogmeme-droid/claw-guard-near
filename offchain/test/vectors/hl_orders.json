@@ -1,0 +1,420 @@
+{
+  "meta": {
+    "generator": "scripts/hl_vectors.py",
+    "sdk": "hyperliquid-python-sdk==0.24.0",
+    "is_mainnet": false,
+    "note": "Testnet only. Test key derived from a public label; worthless."
+  },
+  "vectors": [
+    {
+      "name": "btc_buy_far_below",
+      "request": {
+        "coin_asset": 3,
+        "is_buy": true,
+        "limit_px": "1000",
+        "sz": "0.001",
+        "reduce_only": false,
+        "tif": "Gtc"
+      },
+      "action": {
+        "type": "order",
+        "orders": [
+          {
+            "a": 3,
+            "b": true,
+            "p": "1000",
+            "s": "0.001",
+            "r": false,
+            "t": {
+              "limit": {
+                "tif": "Gtc"
+              }
+            }
+          }
+        ],
+        "grouping": "na"
+      },
+      "action_json": "{\"type\":\"order\",\"orders\":[{\"a\":3,\"b\":true,\"p\":\"1000\",\"s\":\"0.001\",\"r\":false,\"t\":{\"limit\":{\"tif\":\"Gtc\"}}}],\"grouping\":\"na\"}",
+      "msgpack_hex": "83a474797065a56f72646572a66f72646572739186a16103a162c3a170a431303030a173a5302e303031a172c2a17481a56c696d697481a3746966a3477463a867726f7570696e67a26e61",
+      "nonce_ms": 1793318400000,
+      "source": "b",
+      "connection_id": "0x4fefb11c873b0abed0164b25e7c71c49bacd6f19111ab1c89037bf05c689cf56",
+      "digest": "0xb3b15673239dca3c77fb9e1138b7a62a05989688995ea4bf65fd102ccb07ca39",
+      "signer": "0xd6f91a183f9a36834639c56489825c8a9afcfe45",
+      "signature": {
+        "r": "0x9db86c1758bcc9235d0a38bac92817585d959fd8a5f867bd8d1da89ffe5a8d61",
+        "s": "0x2f466ddbac66b5f18ba942c53f493f845287493bb7e1e29928c7c854d2284938",
+        "v": 28
+      }
+    },
+    {
+      "name": "btc_sell_ioc",
+      "request": {
+        "coin_asset": 3,
+        "is_buy": false,
+        "limit_px": "65000",
+        "sz": "0.01",
+        "reduce_only": false,
+        "tif": "Ioc"
+      },
+      "action": {
+        "type": "order",
+        "orders": [
+          {
+            "a": 3,
+            "b": false,
+            "p": "65000",
+            "s": "0.01",
+            "r": false,
+            "t": {
+              "limit": {
+                "tif": "Ioc"
+              }
+            }
+          }
+        ],
+        "grouping": "na"
+      },
+      "action_json": "{\"type\":\"order\",\"orders\":[{\"a\":3,\"b\":false,\"p\":\"65000\",\"s\":\"0.01\",\"r\":false,\"t\":{\"limit\":{\"tif\":\"Ioc\"}}}],\"grouping\":\"na\"}",
+      "msgpack_hex": "83a474797065a56f72646572a66f72646572739186a16103a162c2a170a53635303030a173a4302e3031a172c2a17481a56c696d697481a3746966a3496f63a867726f7570696e67a26e61",
+      "nonce_ms": 1793318400001,
+      "source": "b",
+      "connection_id": "0x6f96bf77d84c1d46f083ac373e7677d9bfc1ca0a39ca1c2d6daec0ce1ee84c55",
+      "digest": "0xe5ef9c43af29341a6aca508d73cf98a5e19b79453669d3483fded164b0d21eb8",
+      "signer": "0xd6f91a183f9a36834639c56489825c8a9afcfe45",
+      "signature": {
+        "r": "0x4f71fac53fca28fb3025c3516912ee766f2b0b35318aea7dc84d81bf5b91c066",
+        "s": "0x6a8db271178d31f0e98229c0ee607642f060ab0b4092f34c6b1bc4112ed605e1",
+        "v": 28
+      }
+    },
+    {
+      "name": "eth_buy_alo_reduce",
+      "request": {
+        "coin_asset": 4,
+        "is_buy": true,
+        "limit_px": "2500.5",
+        "sz": "0.1",
+        "reduce_only": true,
+        "tif": "Alo"
+      },
+      "action": {
+        "type": "order",
+        "orders": [
+          {
+            "a": 4,
+            "b": true,
+            "p": "2500.5",
+            "s": "0.1",
+            "r": true,
+            "t": {
+              "limit": {
+                "tif": "Alo"
+              }
+            }
+          }
+        ],
+        "grouping": "na"
+      },
+      "action_json": "{\"type\":\"order\",\"orders\":[{\"a\":4,\"b\":true,\"p\":\"2500.5\",\"s\":\"0.1\",\"r\":true,\"t\":{\"limit\":{\"tif\":\"Alo\"}}}],\"grouping\":\"na\"}",
+      "msgpack_hex": "83a474797065a56f72646572a66f72646572739186a16104a162c3a170a6323530302e35a173a3302e31a172c3a17481a56c696d697481a3746966a3416c6fa867726f7570696e67a26e61",
+      "nonce_ms": 1793318400002,
+      "source": "b",
+      "connection_id": "0xc891ecd4bef16e4e3f012bb16a42fe604f5c6385a80467b552eeb48c79b2615d",
+      "digest": "0x8f4bc4afa68c18366126780976a6918134c7ec410448600b48ed8857899d1be1",
+      "signer": "0xd6f91a183f9a36834639c56489825c8a9afcfe45",
+      "signature": {
+        "r": "0xa7b26368099bb433b247e2eade98cbcd643ee873857c004351666eb7bbabfd24",
+        "s": "0x483755ace0480c8f15e7d9f33ff53a33b31a5b31b89c7dd445b2a3d444e8a636",
+        "v": 28
+      }
+    },
+    {
+      "name": "asset0_tiny",
+      "request": {
+        "coin_asset": 0,
+        "is_buy": true,
+        "limit_px": "0.5",
+        "sz": "0.00000001",
+        "reduce_only": false,
+        "tif": "Gtc"
+      },
+      "action": {
+        "type": "order",
+        "orders": [
+          {
+            "a": 0,
+            "b": true,
+            "p": "0.5",
+            "s": "0.00000001",
+            "r": false,
+            "t": {
+              "limit": {
+                "tif": "Gtc"
+              }
+            }
+          }
+        ],
+        "grouping": "na"
+      },
+      "action_json": "{\"type\":\"order\",\"orders\":[{\"a\":0,\"b\":true,\"p\":\"0.5\",\"s\":\"0.00000001\",\"r\":false,\"t\":{\"limit\":{\"tif\":\"Gtc\"}}}],\"grouping\":\"na\"}",
+      "msgpack_hex": "83a474797065a56f72646572a66f72646572739186a16100a162c3a170a3302e35a173aa302e3030303030303031a172c2a17481a56c696d697481a3746966a3477463a867726f7570696e67a26e61",
+      "nonce_ms": 1793318400003,
+      "source": "b",
+      "connection_id": "0x8b41490f2380c5d1a781ff81089718fa9b80c193a1c5f9025fb13332ee82a955",
+      "digest": "0xe38ced0deb9f1f338e0a7211029bf04f0f863722a255ca6792a3c30682d170c2",
+      "signer": "0xd6f91a183f9a36834639c56489825c8a9afcfe45",
+      "signature": {
+        "r": "0x57f6693bbaf42df7007d421095a86fa8a93f23062112df8471ae48bb4994e7c7",
+        "s": "0x71123ebd8935755b636712ff714c58326d5cad7f878eca8160de05be068da6d4",
+        "v": 28
+      }
+    },
+    {
+      "name": "asset127_fixint_edge",
+      "request": {
+        "coin_asset": 127,
+        "is_buy": false,
+        "limit_px": "12.345",
+        "sz": "1.5",
+        "reduce_only": false,
+        "tif": "Gtc"
+      },
+      "action": {
+        "type": "order",
+        "orders": [
+          {
+            "a": 127,
+            "b": false,
+            "p": "12.345",
+            "s": "1.5",
+            "r": false,
+            "t": {
+              "limit": {
+                "tif": "Gtc"
+              }
+            }
+          }
+        ],
+        "grouping": "na"
+      },
+      "action_json": "{\"type\":\"order\",\"orders\":[{\"a\":127,\"b\":false,\"p\":\"12.345\",\"s\":\"1.5\",\"r\":false,\"t\":{\"limit\":{\"tif\":\"Gtc\"}}}],\"grouping\":\"na\"}",
+      "msgpack_hex": "83a474797065a56f72646572a66f72646572739186a1617fa162c2a170a631322e333435a173a3312e35a172c2a17481a56c696d697481a3746966a3477463a867726f7570696e67a26e61",
+      "nonce_ms": 1793318400004,
+      "source": "b",
+      "connection_id": "0x9be750c248c5b069f89cf50f55049a6149d91352ea2375520bc6b6de79ad12f0",
+      "digest": "0x1c4eda57c6a243e993287005a4567c35d6f7506e0f64ff0fe6f2c4071a97e0f4",
+      "signer": "0xd6f91a183f9a36834639c56489825c8a9afcfe45",
+      "signature": {
+        "r": "0xc2fbdd5607d5517d4547e6d6307a66973f1a415ce57dcf2284b9aadb5fc531c6",
+        "s": "0x51eb56de7007b39095025a270451a3335652b6c3ab463479c813bb5ee68502e4",
+        "v": 27
+      }
+    },
+    {
+      "name": "asset128_uint8",
+      "request": {
+        "coin_asset": 128,
+        "is_buy": true,
+        "limit_px": "1",
+        "sz": "10",
+        "reduce_only": false,
+        "tif": "Gtc"
+      },
+      "action": {
+        "type": "order",
+        "orders": [
+          {
+            "a": 128,
+            "b": true,
+            "p": "1",
+            "s": "10",
+            "r": false,
+            "t": {
+              "limit": {
+                "tif": "Gtc"
+              }
+            }
+          }
+        ],
+        "grouping": "na"
+      },
+      "action_json": "{\"type\":\"order\",\"orders\":[{\"a\":128,\"b\":true,\"p\":\"1\",\"s\":\"10\",\"r\":false,\"t\":{\"limit\":{\"tif\":\"Gtc\"}}}],\"grouping\":\"na\"}",
+      "msgpack_hex": "83a474797065a56f72646572a66f72646572739186a161cc80a162c3a170a131a173a23130a172c2a17481a56c696d697481a3746966a3477463a867726f7570696e67a26e61",
+      "nonce_ms": 1793318400005,
+      "source": "b",
+      "connection_id": "0x1c6b852f03070ccbee631ea0f42f4364acdab8f448686049f5ead8967fc894fd",
+      "digest": "0x0d3868679671097839cb7eef32745edcff2b141789dad06e2caa5110a501db4b",
+      "signer": "0xd6f91a183f9a36834639c56489825c8a9afcfe45",
+      "signature": {
+        "r": "0x43fd4f1e7e3ad058865371560a1185a588f27c55db5e5ed790aa613f33cf7ea7",
+        "s": "0x6f82404a9d30de1fdadda283fe5a3ac97c303ff2fca8526f881c34461d22b446",
+        "v": 27
+      }
+    },
+    {
+      "name": "asset255_uint8_max",
+      "request": {
+        "coin_asset": 255,
+        "is_buy": true,
+        "limit_px": "99999",
+        "sz": "0.12345678",
+        "reduce_only": false,
+        "tif": "Ioc"
+      },
+      "action": {
+        "type": "order",
+        "orders": [
+          {
+            "a": 255,
+            "b": true,
+            "p": "99999",
+            "s": "0.12345678",
+            "r": false,
+            "t": {
+              "limit": {
+                "tif": "Ioc"
+              }
+            }
+          }
+        ],
+        "grouping": "na"
+      },
+      "action_json": "{\"type\":\"order\",\"orders\":[{\"a\":255,\"b\":true,\"p\":\"99999\",\"s\":\"0.12345678\",\"r\":false,\"t\":{\"limit\":{\"tif\":\"Ioc\"}}}],\"grouping\":\"na\"}",
+      "msgpack_hex": "83a474797065a56f72646572a66f72646572739186a161ccffa162c3a170a53939393939a173aa302e3132333435363738a172c2a17481a56c696d697481a3746966a3496f63a867726f7570696e67a26e61",
+      "nonce_ms": 1793318400006,
+      "source": "b",
+      "connection_id": "0xe9e5913228bfd6b43f3af29e7f9ec7f7eab815c1e99a085243f6ecc2dca8067e",
+      "digest": "0xca6da6d49bf4a481996a2fdd3af3fb1ad347e3735235c5b7f619aefc7b44bf4f",
+      "signer": "0xd6f91a183f9a36834639c56489825c8a9afcfe45",
+      "signature": {
+        "r": "0x1a8351fbd6c1b3c525530a057c5b564238fee17d500bb63469bf81b9f9e1f756",
+        "s": "0x489de7e135d1984c87bc4fdbbdb74500b4cefbe917ab1b18c4d6e2e2bcb4195e",
+        "v": 27
+      }
+    },
+    {
+      "name": "asset256_uint16",
+      "request": {
+        "coin_asset": 256,
+        "is_buy": false,
+        "limit_px": "0.0001234",
+        "sz": "123",
+        "reduce_only": true,
+        "tif": "Gtc"
+      },
+      "action": {
+        "type": "order",
+        "orders": [
+          {
+            "a": 256,
+            "b": false,
+            "p": "0.0001234",
+            "s": "123",
+            "r": true,
+            "t": {
+              "limit": {
+                "tif": "Gtc"
+              }
+            }
+          }
+        ],
+        "grouping": "na"
+      },
+      "action_json": "{\"type\":\"order\",\"orders\":[{\"a\":256,\"b\":false,\"p\":\"0.0001234\",\"s\":\"123\",\"r\":true,\"t\":{\"limit\":{\"tif\":\"Gtc\"}}}],\"grouping\":\"na\"}",
+      "msgpack_hex": "83a474797065a56f72646572a66f72646572739186a161cd0100a162c2a170a9302e30303031323334a173a3313233a172c3a17481a56c696d697481a3746966a3477463a867726f7570696e67a26e61",
+      "nonce_ms": 1793318400007,
+      "source": "b",
+      "connection_id": "0x52a1a69e74c39a9dc6a71674b10ea431c3357f50a89d899435ecaba9855327b4",
+      "digest": "0x586a56d937dc8226a54ced76aa1e97f4459aafe910933f8a5cb7b50babfbbbc2",
+      "signer": "0xd6f91a183f9a36834639c56489825c8a9afcfe45",
+      "signature": {
+        "r": "0xf264d6ab5c8b230907b55046f06dc05e2cdfe648a13c70512af7357b30337149",
+        "s": "0x3076e4921db4cc8a95c4963e42e56fec46f1c7667d710695531850303bd1f2a4",
+        "v": 28
+      }
+    },
+    {
+      "name": "asset65536_uint32",
+      "request": {
+        "coin_asset": 65536,
+        "is_buy": true,
+        "limit_px": "3.1415",
+        "sz": "2",
+        "reduce_only": false,
+        "tif": "Alo"
+      },
+      "action": {
+        "type": "order",
+        "orders": [
+          {
+            "a": 65536,
+            "b": true,
+            "p": "3.1415",
+            "s": "2",
+            "r": false,
+            "t": {
+              "limit": {
+                "tif": "Alo"
+              }
+            }
+          }
+        ],
+        "grouping": "na"
+      },
+      "action_json": "{\"type\":\"order\",\"orders\":[{\"a\":65536,\"b\":true,\"p\":\"3.1415\",\"s\":\"2\",\"r\":false,\"t\":{\"limit\":{\"tif\":\"Alo\"}}}],\"grouping\":\"na\"}",
+      "msgpack_hex": "83a474797065a56f72646572a66f72646572739186a161ce00010000a162c3a170a6332e31343135a173a132a172c2a17481a56c696d697481a3746966a3416c6fa867726f7570696e67a26e61",
+      "nonce_ms": 1793318400008,
+      "source": "b",
+      "connection_id": "0x535d2da43bce8ee5dfbb89cd52999cbda36bf71a56b4238a090ec728f7fefe30",
+      "digest": "0xf9968ffb2e679be9fc07bb7728cfe0d963b1f4ee4bf93f4326389901ad0b95a1",
+      "signer": "0xd6f91a183f9a36834639c56489825c8a9afcfe45",
+      "signature": {
+        "r": "0x584068f09ec592b721ad9202b2aff4b5a141ad7fbbe43d5546412bc2eddcfb3",
+        "s": "0x29ebed17e2938982cbbaa90d27c667373d77028f8d7db43e3cf05cd726010169",
+        "v": 27
+      }
+    },
+    {
+      "name": "big_nonce",
+      "request": {
+        "coin_asset": 3,
+        "is_buy": true,
+        "limit_px": "1000",
+        "sz": "0.002",
+        "reduce_only": false,
+        "tif": "Gtc"
+      },
+      "action": {
+        "type": "order",
+        "orders": [
+          {
+            "a": 3,
+            "b": true,
+            "p": "1000",
+            "s": "0.002",
+            "r": false,
+            "t": {
+              "limit": {
+                "tif": "Gtc"
+              }
+            }
+          }
+        ],
+        "grouping": "na"
+      },
+      "action_json": "{\"type\":\"order\",\"orders\":[{\"a\":3,\"b\":true,\"p\":\"1000\",\"s\":\"0.002\",\"r\":false,\"t\":{\"limit\":{\"tif\":\"Gtc\"}}}],\"grouping\":\"na\"}",
+      "msgpack_hex": "83a474797065a56f72646572a66f72646572739186a16103a162c3a170a431303030a173a5302e303032a172c2a17481a56c696d697481a3746966a3477463a867726f7570696e67a26e61",
+      "nonce_ms": 18446744073709551615,
+      "source": "b",
+      "connection_id": "0xb7c3941ede8e1b795c4fb37db5c39304717ee60cf9e767cc1608b01341bebe6a",
+      "digest": "0xd0d48885faf2d7cbadc1cf80a99a18a895ed0204c6a5cbdd820bd6ecf111ee2f",
+      "signer": "0xd6f91a183f9a36834639c56489825c8a9afcfe45",
+      "signature": {
+        "r": "0xeb214b216a57df087c68a321056c3d84995e84f1a3adf9907cc830c74b156de6",
+        "s": "0xdb5f8e1bfa2c102ecd7fabaf7a5ce3e7f5623ee33b4a350a842c67d361e4922",
+        "v": 28
+      }
+    }
+  ]
+}
