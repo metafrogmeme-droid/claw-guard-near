@@ -829,6 +829,11 @@ Libraries and tools actually used (exact versions are pinned in `Cargo.lock` and
   viem), `chainsig.js` (used once, outside the repo, to generate derivation cross-check vectors;
   not a dependency), NEAR Intents (no testnet), Shade Agents (deprecated).
 
+## Disclosure
+
+> Disclosure: the same author also entered **KeyLease** (https://github.com/metafrogmeme-droid/keylease) at
+> NEAR HACKATHON. The two projects are independent and share no code.
+
 ## License
 
 MIT, see [LICENSE](LICENSE).
